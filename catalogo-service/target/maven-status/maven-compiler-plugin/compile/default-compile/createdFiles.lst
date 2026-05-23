@@ -1,0 +1,6 @@
+com\bibliogo\catalogo_service\Controller\LibroController.class
+com\bibliogo\catalogo_service\DataLoader.class
+com\bibliogo\catalogo_service\Service\LibroService.class
+com\bibliogo\catalogo_service\CatalogoServiceApplication.class
+com\bibliogo\catalogo_service\Model\Libro.class
+com\bibliogo\catalogo_service\Repository\LibroRepository.class
