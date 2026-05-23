@@ -1,0 +1,6 @@
+com\bibliogo\carrito\Controller\CarritoController.class
+com\bibliogo\carrito\CarritoApplication.class
+com\bibliogo\carrito\Service\CarritoService.class
+com\bibliogo\carrito\DataLoader.class
+com\bibliogo\carrito\Model\Carrito.class
+com\bibliogo\carrito\Repository\CarritoRepository.class
