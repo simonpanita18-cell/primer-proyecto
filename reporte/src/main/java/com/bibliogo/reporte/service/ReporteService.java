@@ -4,10 +4,8 @@ import com.bibliogo.reporte.model.Reporte;
 import com.bibliogo.reporte.repository.ReporteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ReporteService {
@@ -19,8 +17,9 @@ public class ReporteService {
         return repository.findAll();
     }
 
-    public Optional<Reporte> buscarPorId(Integer id) {
-        return repository.findById(id);
+    public Reporte buscarPorId(Integer id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Reporte no encontrado con id: " + id));
     }
 
     public List<Reporte> buscarPorTipo(String tipo) {
@@ -37,6 +36,9 @@ public class ReporteService {
     }
 
     public void eliminar(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Reporte no encontrado con id: " + id);
+        }
         repository.deleteById(id);
     }
 }

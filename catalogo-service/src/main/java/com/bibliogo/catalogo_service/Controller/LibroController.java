@@ -1,14 +1,11 @@
 package com.bibliogo.catalogo_service.Controller;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.bibliogo.catalogo_service.Model.Libro;
 import com.bibliogo.catalogo_service.Service.LibroService;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/libros")
@@ -18,53 +15,53 @@ public class LibroController {
     private LibroService service;
 
     @GetMapping("/listar")
-    public List<Libro> listar() {
-        return service.listar();
+    public ResponseEntity<List<Libro>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Optional<Libro> buscarPorId(@PathVariable Integer id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<Libro> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/isbn/{isbn}")
-    public Optional<Libro> buscarPorIsbn(@PathVariable String isbn) {
-        return service.buscarPorIsbn(isbn);
+    public ResponseEntity<Libro> buscarPorIsbn(@PathVariable String isbn) {
+        return ResponseEntity.ok(service.buscarPorIsbn(isbn));
     }
 
     @GetMapping("/categoria/{categoria}")
-    public List<Libro> buscarPorCategoria(@PathVariable String categoria) {
-        return service.buscarPorCategoria(categoria);
+    public ResponseEntity<List<Libro>> buscarPorCategoria(@PathVariable String categoria) {
+        return ResponseEntity.ok(service.buscarPorCategoria(categoria));
     }
 
     @GetMapping("/autor/{autor}")
-    public List<Libro> buscarPorAutor(@PathVariable String autor) {
-        return service.buscarPorAutor(autor);
+    public ResponseEntity<List<Libro>> buscarPorAutor(@PathVariable String autor) {
+        return ResponseEntity.ok(service.buscarPorAutor(autor));
     }
 
     @GetMapping("/buscar/{titulo}")
-    public List<Libro> buscarPorTitulo(@PathVariable String titulo) {
-        return service.buscarPorTitulo(titulo);
+    public ResponseEntity<List<Libro>> buscarPorTitulo(@PathVariable String titulo) {
+        return ResponseEntity.ok(service.buscarPorTitulo(titulo));
     }
 
     @GetMapping("/disponibles")
-    public List<Libro> disponibles() {
-        return service.buscarDisponibles();
+    public ResponseEntity<List<Libro>> disponibles() {
+        return ResponseEntity.ok(service.buscarDisponibles());
     }
 
     @PostMapping("/crear")
-    public Libro crear(@RequestBody Libro libro) {
-        return service.crear(libro);
+    public ResponseEntity<Libro> crear(@RequestBody Libro libro) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(libro));
     }
 
     @PutMapping("/actualizar/{id}")
-    public Libro actualizar(@PathVariable Integer id, @RequestBody Libro libro) {
-        return service.actualizar(id, libro);
+    public ResponseEntity<Libro> actualizar(@PathVariable Integer id, @RequestBody Libro libro) {
+        return ResponseEntity.ok(service.actualizar(id, libro));
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
-        return "Libro eliminado correctamente";
+        return ResponseEntity.ok("Libro eliminado correctamente");
     }
 }

@@ -3,9 +3,9 @@ package com.bibliogo.carrito.Controller;
 import com.bibliogo.carrito.Model.Carrito;
 import com.bibliogo.carrito.Service.CarritoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/carrito")
@@ -15,49 +15,49 @@ public class CarritoController {
     private CarritoService service;
 
     @GetMapping("/listar")
-    public List<Carrito> listar() {
-        return service.listar();
+    public ResponseEntity<List<Carrito>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Optional<Carrito> buscarPorId(@PathVariable Integer id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<Carrito> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public List<Carrito> buscarPorUsuario(@PathVariable Integer usuarioId) {
-        return service.buscarPorUsuario(usuarioId);
+    public ResponseEntity<List<Carrito>> buscarPorUsuario(@PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(service.buscarPorUsuario(usuarioId));
     }
 
     @GetMapping("/usuario/{usuarioId}/activo")
-    public List<Carrito> carritoActivo(@PathVariable Integer usuarioId) {
-        return service.carritoActivoDeUsuario(usuarioId);
+    public ResponseEntity<List<Carrito>> carritoActivo(@PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(service.carritoActivoDeUsuario(usuarioId));
     }
 
     @PostMapping("/agregar")
-    public Carrito agregar(@RequestBody Carrito carrito) {
-        return service.agregar(carrito);
+    public ResponseEntity<Carrito> agregar(@RequestBody Carrito carrito) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.agregar(carrito));
     }
 
     @PutMapping("/cantidad/{id}")
-    public Carrito actualizarCantidad(@PathVariable Integer id, @RequestParam Integer cantidad) {
-        return service.actualizarCantidad(id, cantidad);
+    public ResponseEntity<Carrito> actualizarCantidad(@PathVariable Integer id, @RequestParam Integer cantidad) {
+        return ResponseEntity.ok(service.actualizarCantidad(id, cantidad));
     }
 
     @PutMapping("/confirmar/{id}")
-    public Carrito confirmar(@PathVariable Integer id) {
-        return service.confirmar(id);
+    public ResponseEntity<Carrito> confirmar(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.confirmar(id));
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
-        return "Item eliminado del carrito";
+        return ResponseEntity.ok("Item eliminado del carrito");
     }
 
     @PutMapping("/vaciar/{usuarioId}")
-    public String vaciar(@PathVariable Integer usuarioId) {
+    public ResponseEntity<String> vaciar(@PathVariable Integer usuarioId) {
         service.vaciarCarrito(usuarioId);
-        return "Carrito vaciado correctamente";
+        return ResponseEntity.ok("Carrito vaciado correctamente");
     }
 }

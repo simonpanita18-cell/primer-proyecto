@@ -3,10 +3,9 @@ package com.bibliogo.reporte.controller;
 import com.bibliogo.reporte.model.Reporte;
 import com.bibliogo.reporte.service.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/reportes")
@@ -16,33 +15,33 @@ public class ReporteController {
     private ReporteService service;
 
     @GetMapping("/listar")
-    public List<Reporte> listar() {
-        return service.listar();
+    public ResponseEntity<List<Reporte>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Optional<Reporte> buscarPorId(@PathVariable Integer id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<Reporte> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/tipo/{tipo}")
-    public List<Reporte> buscarPorTipo(@PathVariable String tipo) {
-        return service.buscarPorTipo(tipo);
+    public ResponseEntity<List<Reporte>> buscarPorTipo(@PathVariable String tipo) {
+        return ResponseEntity.ok(service.buscarPorTipo(tipo));
     }
 
     @GetMapping("/generado-por/{generadoPor}")
-    public List<Reporte> buscarPorGeneradoPor(@PathVariable String generadoPor) {
-        return service.buscarPorGeneradoPor(generadoPor);
+    public ResponseEntity<List<Reporte>> buscarPorGeneradoPor(@PathVariable String generadoPor) {
+        return ResponseEntity.ok(service.buscarPorGeneradoPor(generadoPor));
     }
 
     @PostMapping("/crear")
-    public Reporte crear(@RequestBody Reporte reporte) {
-        return service.crear(reporte);
+    public ResponseEntity<Reporte> crear(@RequestBody Reporte reporte) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(reporte));
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
-        return "Reporte eliminado correctamente";
+        return ResponseEntity.ok("Reporte eliminado correctamente");
     }
 }

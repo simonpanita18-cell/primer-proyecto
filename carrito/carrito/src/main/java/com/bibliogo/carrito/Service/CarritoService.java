@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CarritoService {
@@ -17,7 +16,6 @@ public class CarritoService {
     @Autowired
     private WebClient webClient;
 
-    // Verifica que el libro existe y tiene stock en catalogo-service
     private void verificarLibroDisponible(Integer libroId) {
         try {
             String respuesta = webClient.get()
@@ -25,7 +23,6 @@ public class CarritoService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-
             if (respuesta == null || respuesta.contains("no disponible")) {
                 throw new RuntimeException("El libro no está disponible para reservar");
             }
@@ -33,7 +30,6 @@ public class CarritoService {
             if (e.getMessage() != null && e.getMessage().contains("no está disponible")) {
                 throw e;
             }
-            // Si catalogo-service no responde, igual permite agregar al carrito
         }
     }
 
@@ -41,8 +37,9 @@ public class CarritoService {
         return repository.findAll();
     }
 
-    public Optional<Carrito> buscarPorId(Integer id) {
-        return repository.findById(id);
+    public Carrito buscarPorId(Integer id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Item no encontrado con id: " + id));
     }
 
     public List<Carrito> buscarPorUsuario(Integer usuarioId) {
@@ -54,27 +51,27 @@ public class CarritoService {
     }
 
     public Carrito agregar(Carrito carrito) {
-        // Regla de negocio: verificar que el libro existe y tiene stock
         verificarLibroDisponible(carrito.getLibroId());
         carrito.setEstado("activo");
         return repository.save(carrito);
     }
 
     public Carrito actualizarCantidad(Integer id, Integer cantidad) {
-        Carrito carrito = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Item no encontrado con id: " + id));
+        Carrito carrito = buscarPorId(id);
         carrito.setCantidad(cantidad);
         return repository.save(carrito);
     }
 
     public Carrito confirmar(Integer id) {
-        Carrito carrito = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Item no encontrado con id: " + id));
+        Carrito carrito = buscarPorId(id);
         carrito.setEstado("confirmado");
         return repository.save(carrito);
     }
 
     public void eliminar(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Item no encontrado con id: " + id);
+        }
         repository.deleteById(id);
     }
 

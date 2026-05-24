@@ -4,10 +4,8 @@ import com.bibliogo.envio.model.Envio;
 import com.bibliogo.envio.repository.EnvioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EnvioService {
@@ -19,8 +17,9 @@ public class EnvioService {
         return repository.findAll();
     }
 
-    public Optional<Envio> buscarPorId(Integer id) {
-        return repository.findById(id);
+    public Envio buscarPorId(Integer id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Envío no encontrado con id: " + id));
     }
 
     public List<Envio> buscarPorUsuario(Integer usuarioId) {
@@ -42,23 +41,22 @@ public class EnvioService {
     }
 
     public Envio despachar(Integer id) {
-        Envio envio = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Envío no encontrado con id: " + id));
-
+        Envio envio = buscarPorId(id);
         envio.setEstado("en camino");
         return repository.save(envio);
     }
 
     public Envio entregar(Integer id) {
-        Envio envio = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Envío no encontrado con id: " + id));
-
+        Envio envio = buscarPorId(id);
         envio.setEstado("entregado");
         envio.setFechaEntrega(LocalDateTime.now());
         return repository.save(envio);
     }
 
     public void eliminar(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Envío no encontrado con id: " + id);
+        }
         repository.deleteById(id);
     }
 }

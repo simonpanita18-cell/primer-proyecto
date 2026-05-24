@@ -4,10 +4,8 @@ import com.bibliogo.resena.model.Resena;
 import com.bibliogo.resena.repository.ResenaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ResenaService {
@@ -19,8 +17,9 @@ public class ResenaService {
         return repository.findAll();
     }
 
-    public Optional<Resena> buscarPorId(Integer id) {
-        return repository.findById(id);
+    public Resena buscarPorId(Integer id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Reseña no encontrada con id: " + id));
     }
 
     public List<Resena> buscarPorUsuario(Integer usuarioId) {
@@ -41,16 +40,16 @@ public class ResenaService {
     }
 
     public Resena actualizar(Integer id, Resena datos) {
-        Resena resena = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reseña no encontrada con id: " + id));
-
+        Resena resena = buscarPorId(id);
         resena.setCalificacion(datos.getCalificacion());
         resena.setComentario(datos.getComentario());
-
         return repository.save(resena);
     }
 
     public void eliminar(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Reseña no encontrada con id: " + id);
+        }
         repository.deleteById(id);
     }
 }

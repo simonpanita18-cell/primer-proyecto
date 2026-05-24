@@ -3,10 +3,9 @@ package com.bibliogo.notificacion.controller;
 import com.bibliogo.notificacion.model.Notificacion;
 import com.bibliogo.notificacion.service.NotificacionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/notificaciones")
@@ -16,48 +15,48 @@ public class NotificacionController {
     private NotificacionService service;
 
     @GetMapping("/listar")
-    public List<Notificacion> listar() {
-        return service.listar();
+    public ResponseEntity<List<Notificacion>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Optional<Notificacion> buscarPorId(@PathVariable Integer id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<Notificacion> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public List<Notificacion> buscarPorUsuario(@PathVariable Integer usuarioId) {
-        return service.buscarPorUsuario(usuarioId);
+    public ResponseEntity<List<Notificacion>> buscarPorUsuario(@PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(service.buscarPorUsuario(usuarioId));
     }
 
     @GetMapping("/estado/{estado}")
-    public List<Notificacion> buscarPorEstado(@PathVariable String estado) {
-        return service.buscarPorEstado(estado);
+    public ResponseEntity<List<Notificacion>> buscarPorEstado(@PathVariable String estado) {
+        return ResponseEntity.ok(service.buscarPorEstado(estado));
     }
 
     @GetMapping("/tipo/{tipo}")
-    public List<Notificacion> buscarPorTipo(@PathVariable String tipo) {
-        return service.buscarPorTipo(tipo);
+    public ResponseEntity<List<Notificacion>> buscarPorTipo(@PathVariable String tipo) {
+        return ResponseEntity.ok(service.buscarPorTipo(tipo));
     }
 
     @GetMapping("/usuario/{usuarioId}/pendientes")
-    public List<Notificacion> buscarPendientes(@PathVariable Integer usuarioId) {
-        return service.buscarNoLeidas(usuarioId);
+    public ResponseEntity<List<Notificacion>> buscarPendientes(@PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(service.buscarNoLeidas(usuarioId));
     }
 
     @PostMapping("/crear")
-    public Notificacion crear(@RequestBody Notificacion notificacion) {
-        return service.crear(notificacion);
+    public ResponseEntity<Notificacion> crear(@RequestBody Notificacion notificacion) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(notificacion));
     }
 
     @PutMapping("/leer/{id}")
-    public Notificacion marcarComoLeida(@PathVariable Integer id) {
-        return service.marcarComoLeida(id);
+    public ResponseEntity<Notificacion> marcarComoLeida(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.marcarComoLeida(id));
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
-        return "Notificación eliminada correctamente";
+        return ResponseEntity.ok("Notificación eliminada correctamente");
     }
 }

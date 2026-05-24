@@ -3,10 +3,9 @@ package com.bibliogo.resena.controller;
 import com.bibliogo.resena.model.Resena;
 import com.bibliogo.resena.service.ResenaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/resenas")
@@ -16,43 +15,43 @@ public class ResenaController {
     private ResenaService service;
 
     @GetMapping("/listar")
-    public List<Resena> listar() {
-        return service.listar();
+    public ResponseEntity<List<Resena>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Optional<Resena> buscarPorId(@PathVariable Integer id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<Resena> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public List<Resena> buscarPorUsuario(@PathVariable Integer usuarioId) {
-        return service.buscarPorUsuario(usuarioId);
+    public ResponseEntity<List<Resena>> buscarPorUsuario(@PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(service.buscarPorUsuario(usuarioId));
     }
 
     @GetMapping("/libro/{libroId}")
-    public List<Resena> buscarPorLibro(@PathVariable Integer libroId) {
-        return service.buscarPorLibro(libroId);
+    public ResponseEntity<List<Resena>> buscarPorLibro(@PathVariable Integer libroId) {
+        return ResponseEntity.ok(service.buscarPorLibro(libroId));
     }
 
     @GetMapping("/calificacion/{calificacion}")
-    public List<Resena> buscarPorCalificacion(@PathVariable Integer calificacion) {
-        return service.buscarPorCalificacion(calificacion);
+    public ResponseEntity<List<Resena>> buscarPorCalificacion(@PathVariable Integer calificacion) {
+        return ResponseEntity.ok(service.buscarPorCalificacion(calificacion));
     }
 
     @PostMapping("/crear")
-    public Resena crear(@RequestBody Resena resena) {
-        return service.crear(resena);
+    public ResponseEntity<Resena> crear(@RequestBody Resena resena) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(resena));
     }
 
     @PutMapping("/actualizar/{id}")
-    public Resena actualizar(@PathVariable Integer id, @RequestBody Resena resena) {
-        return service.actualizar(id, resena);
+    public ResponseEntity<Resena> actualizar(@PathVariable Integer id, @RequestBody Resena resena) {
+        return ResponseEntity.ok(service.actualizar(id, resena));
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
-        return "Reseña eliminada correctamente";
+        return ResponseEntity.ok("Reseña eliminada correctamente");
     }
 }

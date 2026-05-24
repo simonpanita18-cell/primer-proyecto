@@ -1,10 +1,10 @@
 package com.bibliogo.catalogo_service.Service;
+
 import com.bibliogo.catalogo_service.Model.Libro;
 import com.bibliogo.catalogo_service.Repository.LibroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LibroService {
@@ -16,12 +16,14 @@ public class LibroService {
         return repository.findAll();
     }
 
-    public Optional<Libro> buscarPorId(Integer id) {
-        return repository.findById(id);
+    public Libro buscarPorId(Integer id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Libro no encontrado con id: " + id));
     }
 
-    public Optional<Libro> buscarPorIsbn(String isbn) {
-        return repository.findByIsbn(isbn);
+    public Libro buscarPorIsbn(String isbn) {
+        return repository.findByIsbn(isbn)
+            .orElseThrow(() -> new RuntimeException("Libro no encontrado con isbn: " + isbn));
     }
 
     public List<Libro> buscarPorCategoria(String categoria) {
@@ -50,8 +52,7 @@ public class LibroService {
     }
 
     public Libro actualizar(Integer id, Libro datos) {
-        Libro libro = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Libro no encontrado con id: " + id));
+        Libro libro = buscarPorId(id);
         libro.setTitulo(datos.getTitulo());
         libro.setAutor(datos.getAutor());
         libro.setCategoria(datos.getCategoria());
@@ -67,6 +68,9 @@ public class LibroService {
     }
 
     public void eliminar(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Libro no encontrado con id: " + id);
+        }
         repository.deleteById(id);
     }
 }
