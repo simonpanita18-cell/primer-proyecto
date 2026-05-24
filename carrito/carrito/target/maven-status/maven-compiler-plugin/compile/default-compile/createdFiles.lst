@@ -1,3 +1,4 @@
+com\bibliogo\carrito\config\WebClientConfig.class
 com\bibliogo\carrito\Controller\CarritoController.class
 com\bibliogo\carrito\CarritoApplication.class
 com\bibliogo\carrito\Service\CarritoService.class
