@@ -2,9 +2,15 @@ package com.bibliogo.carrito.Model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "carritos")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Carrito {
 
     @Id
@@ -29,28 +35,4 @@ public class Carrito {
 
     @Column(nullable = false, length = 20)
     private String estado;
-
-    public Carrito() {}
-
-    public Carrito(Integer id, Integer usuarioId, Integer libroId,String tituloLibro, Integer cantidad, String estado) {
-        this.id = id;
-        this.usuarioId = usuarioId;
-        this.libroId = libroId;
-        this.tituloLibro = tituloLibro;
-        this.cantidad = cantidad;
-        this.estado = estado;
-    }
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-    public Integer getUsuarioId() { return usuarioId; }
-    public void setUsuarioId(Integer usuarioId) { this.usuarioId = usuarioId; }
-    public Integer getLibroId() { return libroId; }
-    public void setLibroId(Integer libroId) { this.libroId = libroId; }
-    public String getTituloLibro() { return tituloLibro; }
-    public void setTituloLibro(String tituloLibro) { this.tituloLibro = tituloLibro; }
-    public Integer getCantidad() { return cantidad; }
-    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
 }
