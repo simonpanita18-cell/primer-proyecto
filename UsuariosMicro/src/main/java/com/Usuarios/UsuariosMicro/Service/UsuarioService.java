@@ -2,8 +2,12 @@ package com.Usuarios.UsuariosMicro.Service;
 
 import com.Usuarios.UsuariosMicro.Model.Usuario;
 import com.Usuarios.UsuariosMicro.Repository.UsuarioRepository;
+import com.Usuarios.UsuariosMicro.dto.UsuarioRequestDTO;
+import com.Usuarios.UsuariosMicro.dto.UsuarioResponseDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -34,26 +38,59 @@ public class UsuarioService {
         return usuarioRepository.findByEstado(estado);
     }
 
-    public Usuario crear(Usuario usuario) {
+    public UsuarioResponseDTO crear(UsuarioRequestDTO dto) {
+
+        Usuario usuario = new Usuario();
+
+        usuario.setNombre(dto.getNombre());
+        usuario.setApellido(dto.getApellido());
+        usuario.setCorreo(dto.getCorreo());
+        usuario.setTelefono(dto.getTelefono());
+        usuario.setDireccion(dto.getDireccion());
+        usuario.setRol(dto.getRol());
         usuario.setEstado("activo");
-        return usuarioRepository.save(usuario);
+
+        Usuario guardado = usuarioRepository.save(usuario);
+
+        return convertirDTO(guardado);
     }
 
-    public Usuario actualizar(Integer id, Usuario datos) {
+    public UsuarioResponseDTO actualizar(Integer id, UsuarioRequestDTO dto) {
+
         Usuario usuario = buscarPorId(id);
-        usuario.setNombre(datos.getNombre());
-        usuario.setApellido(datos.getApellido());
-        usuario.setTelefono(datos.getTelefono());
-        usuario.setDireccion(datos.getDireccion());
-        usuario.setRol(datos.getRol());
-        usuario.setEstado(datos.getEstado());
-        return usuarioRepository.save(usuario);
+
+        usuario.setNombre(dto.getNombre());
+        usuario.setApellido(dto.getApellido());
+        usuario.setCorreo(dto.getCorreo());
+        usuario.setTelefono(dto.getTelefono());
+        usuario.setDireccion(dto.getDireccion());
+        usuario.setRol(dto.getRol());
+
+        Usuario actualizado = usuarioRepository.save(usuario);
+
+        return convertirDTO(actualizado);
     }
 
     public void eliminar(Integer id) {
+
         if (!usuarioRepository.existsById(id)) {
             throw new RuntimeException("Usuario no encontrado con id: " + id);
         }
+
         usuarioRepository.deleteById(id);
+    }
+
+    private UsuarioResponseDTO convertirDTO(Usuario usuario) {
+
+        return new UsuarioResponseDTO(
+            usuario.getId(),
+            usuario.getNombre(),
+            usuario.getApellido(),
+            usuario.getCorreo(),
+            usuario.getTelefono(),
+            usuario.getDireccion(),
+            usuario.getRol(),
+            usuario.getEstado()
+        );
     }
 }

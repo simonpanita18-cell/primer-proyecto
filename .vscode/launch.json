@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "UsuariosMicroApplication",
+            "request": "launch",
+            "mainClass": "com.Usuarios.UsuariosMicro.UsuariosMicroApplication",
+            "projectName": "UsuariosMicro"
+        },
+        {
+            "type": "java",
             "name": "ReporteApplication",
             "request": "launch",
             "mainClass": "com.bibliogo.reporte.ReporteApplication",

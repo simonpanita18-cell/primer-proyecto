@@ -2,9 +2,15 @@ package com.Usuarios.UsuariosMicro.Controller;
 
 import com.Usuarios.UsuariosMicro.Model.Usuario;
 import com.Usuarios.UsuariosMicro.Service.UsuarioService;
+import com.Usuarios.UsuariosMicro.dto.UsuarioRequestDTO;
+import com.Usuarios.UsuariosMicro.dto.UsuarioResponseDTO;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -40,13 +46,18 @@ public class UsuarioController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(usuario));
+    public ResponseEntity<UsuarioResponseDTO> crear(@Valid @RequestBody UsuarioRequestDTO usuarioDTO) {
+        UsuarioResponseDTO creado = service.crear(usuarioDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<Usuario> actualizar(@PathVariable Integer id, @RequestBody Usuario usuario) {
-        return ResponseEntity.ok(service.actualizar(id, usuario));
+    public ResponseEntity<UsuarioResponseDTO> actualizar(
+            @PathVariable Integer id,
+            @Valid @RequestBody UsuarioRequestDTO usuarioDTO) {
+
+        UsuarioResponseDTO actualizado = service.actualizar(id, usuarioDTO);
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/eliminar/{id}")
