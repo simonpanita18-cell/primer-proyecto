@@ -1,8 +1,10 @@
-package com.bibliogo.notificacion.repository;
+package com.bibliogo.notificaciones.repository;
 
-import com.bibliogo.notificacion.model.Notificacion;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.bibliogo.notificaciones.model.Notificacion;
 
 import java.util.List;
 

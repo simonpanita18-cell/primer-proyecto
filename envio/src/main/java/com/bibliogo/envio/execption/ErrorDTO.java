@@ -1,4 +1,4 @@
-package com.bibliogo.envio.exception;
+package com.bibliogo.envio.execption;
 
 import java.time.LocalDateTime;
 

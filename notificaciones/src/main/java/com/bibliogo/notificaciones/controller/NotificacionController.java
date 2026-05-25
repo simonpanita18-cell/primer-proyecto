@@ -1,10 +1,12 @@
-package com.bibliogo.notificacion.controller;
+package com.bibliogo.notificaciones.controller;
 
-import com.bibliogo.notificacion.model.Notificacion;
-import com.bibliogo.notificacion.service.NotificacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import com.bibliogo.notificaciones.model.Notificacion;
+import com.bibliogo.notificaciones.service.NotificacionService;
+
 import java.util.List;
 
 @RestController

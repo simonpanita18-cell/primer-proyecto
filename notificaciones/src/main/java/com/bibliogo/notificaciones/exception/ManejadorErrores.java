@@ -1,4 +1,4 @@
-package com.bibliogo.notificacion.exception;
+package com.bibliogo.notificaciones.exception;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;

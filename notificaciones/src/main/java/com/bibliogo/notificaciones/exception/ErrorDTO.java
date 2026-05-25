@@ -1,4 +1,4 @@
-package com.bibliogo.notificacion.exception;
+package com.bibliogo.notificaciones.exception;
 
 import java.time.LocalDateTime;
 

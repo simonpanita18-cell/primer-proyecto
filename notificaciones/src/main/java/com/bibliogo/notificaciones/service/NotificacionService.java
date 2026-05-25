@@ -1,9 +1,11 @@
-package com.bibliogo.notificacion.service;
+package com.bibliogo.notificaciones.service;
 
-import com.bibliogo.notificacion.model.Notificacion;
-import com.bibliogo.notificacion.repository.NotificacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.bibliogo.notificaciones.model.Notificacion;
+import com.bibliogo.notificaciones.repository.NotificacionRepository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

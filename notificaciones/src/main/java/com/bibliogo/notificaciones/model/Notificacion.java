@@ -1,4 +1,4 @@
-package com.bibliogo.notificacion.model;
+package com.bibliogo.notificaciones.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

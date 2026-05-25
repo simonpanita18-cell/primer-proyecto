@@ -1,4 +1,4 @@
-package com.bibliogo.prestamo.exception;
+package com.bibliogo.prestamo.exeption;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;

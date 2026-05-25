@@ -1,4 +1,4 @@
-package com.bibliogo.prestamo.exception;
+package com.bibliogo.prestamo.exeption;
 
 import java.time.LocalDateTime;
 

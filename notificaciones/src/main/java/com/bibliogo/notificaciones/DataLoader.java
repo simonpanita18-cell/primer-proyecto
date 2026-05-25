@@ -1,10 +1,12 @@
-package com.bibliogo.notificacion;
+package com.bibliogo.notificaciones;
 
-import com.bibliogo.notificacion.model.Notificacion;
-import com.bibliogo.notificacion.repository.NotificacionRepository;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.bibliogo.notificaciones.model.Notificacion;
+import com.bibliogo.notificaciones.repository.NotificacionRepository;
 
 import java.time.LocalDateTime;
 

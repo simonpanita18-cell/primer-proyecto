@@ -1,0 +1,49 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "ReporteApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.reporte.ReporteApplication",
+            "projectName": "reporte"
+        },
+        {
+            "type": "java",
+            "name": "EnvioApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.envio.EnvioApplication",
+            "projectName": "envio"
+        },
+        {
+            "type": "java",
+            "name": "PagoApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.pago.PagoApplication",
+            "projectName": "pago"
+        },
+        {
+            "type": "java",
+            "name": "NotificacionApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.notificaciones.NotificacionApplication",
+            "projectName": "notificaciones"
+        },
+        {
+            "type": "java",
+            "name": "ResenaServiceApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.resena.ResenaServiceApplication",
+            "projectName": "resena"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-PrestamoApplication<prestamo>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.bibliogo.prestamo.PrestamoApplication",
+            "projectName": "prestamo",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

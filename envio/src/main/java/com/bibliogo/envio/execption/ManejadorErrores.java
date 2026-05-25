@@ -1,4 +1,4 @@
-package com.bibliogo.envio.exception;
+package com.bibliogo.envio.execption;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
