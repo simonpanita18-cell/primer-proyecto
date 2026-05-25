@@ -1,10 +1,16 @@
 package com.bibliogo.reporte.controller;
 
+import com.bibliogo.reporte.dto.ReporteRequestDTO;
+import com.bibliogo.reporte.dto.ReporteResponseDTO;
 import com.bibliogo.reporte.model.Reporte;
 import com.bibliogo.reporte.service.ReporteService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -35,13 +41,19 @@ public class ReporteController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Reporte> crear(@RequestBody Reporte reporte) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(reporte));
+    public ResponseEntity<ReporteResponseDTO> crear(
+            @Valid @RequestBody ReporteRequestDTO reporteDTO) {
+
+        ReporteResponseDTO creado = service.crear(reporteDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
+
         service.eliminar(id);
+
         return ResponseEntity.ok("Reporte eliminado correctamente");
     }
 }

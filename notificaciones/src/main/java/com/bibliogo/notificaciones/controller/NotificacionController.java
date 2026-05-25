@@ -4,8 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import com.bibliogo.notificaciones.dto.NotificacionRequestDTO;
+import com.bibliogo.notificaciones.dto.NotificacionResponseDTO;
 import com.bibliogo.notificaciones.model.Notificacion;
 import com.bibliogo.notificaciones.service.NotificacionService;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -47,18 +51,26 @@ public class NotificacionController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Notificacion> crear(@RequestBody Notificacion notificacion) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(notificacion));
+    public ResponseEntity<NotificacionResponseDTO> crear(
+            @Valid @RequestBody NotificacionRequestDTO dto) {
+
+        NotificacionResponseDTO creada = service.crear(dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
     }
 
     @PutMapping("/leer/{id}")
-    public ResponseEntity<Notificacion> marcarComoLeida(@PathVariable Integer id) {
+    public ResponseEntity<NotificacionResponseDTO> marcarComoLeida(
+            @PathVariable Integer id) {
+
         return ResponseEntity.ok(service.marcarComoLeida(id));
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
+
         service.eliminar(id);
+
         return ResponseEntity.ok("Notificación eliminada correctamente");
     }
 }

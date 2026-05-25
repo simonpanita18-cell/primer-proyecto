@@ -1,10 +1,16 @@
 package com.bibliogo.pago.controller;
 
+import com.bibliogo.pago.dto.PagoRequestDTO;
+import com.bibliogo.pago.dto.PagoResponseDTO;
 import com.bibliogo.pago.model.Pago;
 import com.bibliogo.pago.service.PagoService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -45,17 +51,18 @@ public class PagoController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Pago> crear(@RequestBody Pago pago) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(pago));
+    public ResponseEntity<PagoResponseDTO> crear(@Valid @RequestBody PagoRequestDTO pagoDTO) {
+        PagoResponseDTO creado = service.crear(pagoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/confirmar/{id}")
-    public ResponseEntity<Pago> confirmar(@PathVariable Integer id) {
+    public ResponseEntity<PagoResponseDTO> confirmar(@PathVariable Integer id) {
         return ResponseEntity.ok(service.confirmar(id));
     }
 
     @PutMapping("/rechazar/{id}")
-    public ResponseEntity<Pago> rechazar(@PathVariable Integer id) {
+    public ResponseEntity<PagoResponseDTO> rechazar(@PathVariable Integer id) {
         return ResponseEntity.ok(service.rechazar(id));
     }
 

@@ -1,10 +1,17 @@
 package com.bibliogo.resena.controller;
 
+import com.bibliogo.resena.dto.ResenaRequestDTO;
+import com.bibliogo.resena.dto.ResenaResponseDTO;
+import com.bibliogo.resena.dto.ResenaUpdateDTO;
 import com.bibliogo.resena.model.Resena;
 import com.bibliogo.resena.service.ResenaService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -40,18 +47,27 @@ public class ResenaController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Resena> crear(@RequestBody Resena resena) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(resena));
+    public ResponseEntity<ResenaResponseDTO> crear(
+            @Valid @RequestBody ResenaRequestDTO dto) {
+
+        ResenaResponseDTO creada = service.crear(dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
     }
 
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<Resena> actualizar(@PathVariable Integer id, @RequestBody Resena resena) {
-        return ResponseEntity.ok(service.actualizar(id, resena));
+    public ResponseEntity<ResenaResponseDTO> actualizar(
+            @PathVariable Integer id,
+            @Valid @RequestBody ResenaUpdateDTO dto) {
+
+        return ResponseEntity.ok(service.actualizar(id, dto));
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
+
         service.eliminar(id);
+
         return ResponseEntity.ok("Reseña eliminada correctamente");
     }
 }

@@ -2,6 +2,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CarritoApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.carrito.CarritoApplication",
+            "projectName": "carrito-service"
+        },
+        {
+            "type": "java",
+            "name": "CatalogoServiceApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.catalogo_service.CatalogoServiceApplication",
+            "projectName": "catalogo-service"
+        },
+        {
+            "type": "java",
             "name": "UsuariosMicroApplication",
             "request": "launch",
             "mainClass": "com.Usuarios.UsuariosMicro.UsuariosMicroApplication",

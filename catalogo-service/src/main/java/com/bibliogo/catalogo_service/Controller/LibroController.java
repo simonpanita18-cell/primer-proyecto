@@ -2,9 +2,15 @@ package com.bibliogo.catalogo_service.Controller;
 
 import com.bibliogo.catalogo_service.Model.Libro;
 import com.bibliogo.catalogo_service.Service.LibroService;
+import com.bibliogo.catalogo_service.dto.LibroRequestDTO;
+import com.bibliogo.catalogo_service.dto.LibroResponseDTO;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -50,13 +56,18 @@ public class LibroController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Libro> crear(@RequestBody Libro libro) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(libro));
+    public ResponseEntity<LibroResponseDTO> crear(@Valid @RequestBody LibroRequestDTO libroDTO) {
+        LibroResponseDTO creado = service.crear(libroDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<Libro> actualizar(@PathVariable Integer id, @RequestBody Libro libro) {
-        return ResponseEntity.ok(service.actualizar(id, libro));
+    public ResponseEntity<LibroResponseDTO> actualizar(
+            @PathVariable Integer id,
+            @Valid @RequestBody LibroRequestDTO libroDTO) {
+
+        LibroResponseDTO actualizado = service.actualizar(id, libroDTO);
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/eliminar/{id}")

@@ -1,9 +1,13 @@
 package com.bibliogo.pago.service;
 
+import com.bibliogo.pago.dto.PagoRequestDTO;
+import com.bibliogo.pago.dto.PagoResponseDTO;
 import com.bibliogo.pago.model.Pago;
 import com.bibliogo.pago.repository.PagoRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,7 +23,7 @@ public class PagoService {
 
     public Pago buscarPorId(Integer id) {
         return repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
+                .orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
     }
 
     public List<Pago> buscarPorUsuario(Integer usuarioId) {
@@ -38,28 +42,65 @@ public class PagoService {
         return repository.findByTipo(tipo);
     }
 
-    public Pago crear(Pago pago) {
+    public PagoResponseDTO crear(PagoRequestDTO dto) {
+
+        Pago pago = new Pago();
+
+        pago.setPrestamoId(dto.getPrestamoId());
+        pago.setUsuarioId(dto.getUsuarioId());
+        pago.setMonto(dto.getMonto());
+        pago.setMetodo(dto.getMetodo());
+        pago.setTipo(dto.getTipo());
         pago.setEstado("pendiente");
         pago.setFechaPago(LocalDateTime.now());
-        return repository.save(pago);
+
+        Pago guardado = repository.save(pago);
+
+        return convertirDTO(guardado);
     }
 
-    public Pago confirmar(Integer id) {
+    public PagoResponseDTO confirmar(Integer id) {
+
         Pago pago = buscarPorId(id);
+
         pago.setEstado("pagado");
-        return repository.save(pago);
+
+        Pago actualizado = repository.save(pago);
+
+        return convertirDTO(actualizado);
     }
 
-    public Pago rechazar(Integer id) {
+    public PagoResponseDTO rechazar(Integer id) {
+
         Pago pago = buscarPorId(id);
+
         pago.setEstado("rechazado");
-        return repository.save(pago);
+
+        Pago actualizado = repository.save(pago);
+
+        return convertirDTO(actualizado);
     }
 
     public void eliminar(Integer id) {
+
         if (!repository.existsById(id)) {
             throw new RuntimeException("Pago no encontrado con id: " + id);
         }
+
         repository.deleteById(id);
+    }
+
+    private PagoResponseDTO convertirDTO(Pago pago) {
+
+        return new PagoResponseDTO(
+                pago.getId(),
+                pago.getPrestamoId(),
+                pago.getUsuarioId(),
+                pago.getMonto(),
+                pago.getMetodo(),
+                pago.getEstado(),
+                pago.getTipo(),
+                pago.getFechaPago()
+        );
     }
 }

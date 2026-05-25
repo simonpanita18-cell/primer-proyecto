@@ -1,10 +1,17 @@
 package com.bibliogo.prestamo.controller;
 
+import com.bibliogo.prestamo.dto.PrestamoRequestDTO;
+import com.bibliogo.prestamo.dto.PrestamoResponseDTO;
+import com.bibliogo.prestamo.dto.PrestamoUpdateDTO;
 import com.bibliogo.prestamo.model.Prestamo;
 import com.bibliogo.prestamo.service.PrestamoService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -40,18 +47,22 @@ public class PrestamoController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Prestamo> crear(@RequestBody Prestamo prestamo) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(prestamo));
+    public ResponseEntity<PrestamoResponseDTO> crear(@Valid @RequestBody PrestamoRequestDTO prestamoDTO) {
+        PrestamoResponseDTO creado = service.crear(prestamoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/devolver/{id}")
-    public ResponseEntity<Prestamo> devolver(@PathVariable Integer id) {
+    public ResponseEntity<PrestamoResponseDTO> devolver(@PathVariable Integer id) {
         return ResponseEntity.ok(service.devolver(id));
     }
 
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<Prestamo> actualizar(@PathVariable Integer id, @RequestBody Prestamo prestamo) {
-        return ResponseEntity.ok(service.actualizar(id, prestamo));
+    public ResponseEntity<PrestamoResponseDTO> actualizar(
+            @PathVariable Integer id,
+            @Valid @RequestBody PrestamoUpdateDTO prestamoDTO) {
+
+        return ResponseEntity.ok(service.actualizar(id, prestamoDTO));
     }
 
     @DeleteMapping("/eliminar/{id}")

@@ -2,9 +2,16 @@ package com.bibliogo.carrito.Controller;
 
 import com.bibliogo.carrito.Model.Carrito;
 import com.bibliogo.carrito.Service.CarritoService;
+import com.bibliogo.carrito.dto.CarritoCantidadDTO;
+import com.bibliogo.carrito.dto.CarritoRequestDTO;
+import com.bibliogo.carrito.dto.CarritoResponseDTO;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -35,17 +42,21 @@ public class CarritoController {
     }
 
     @PostMapping("/agregar")
-    public ResponseEntity<Carrito> agregar(@RequestBody Carrito carrito) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.agregar(carrito));
+    public ResponseEntity<CarritoResponseDTO> agregar(@Valid @RequestBody CarritoRequestDTO carritoDTO) {
+        CarritoResponseDTO creado = service.agregar(carritoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/cantidad/{id}")
-    public ResponseEntity<Carrito> actualizarCantidad(@PathVariable Integer id, @RequestParam Integer cantidad) {
-        return ResponseEntity.ok(service.actualizarCantidad(id, cantidad));
+    public ResponseEntity<CarritoResponseDTO> actualizarCantidad(
+            @PathVariable Integer id,
+            @Valid @RequestBody CarritoCantidadDTO cantidadDTO) {
+
+        return ResponseEntity.ok(service.actualizarCantidad(id, cantidadDTO));
     }
 
     @PutMapping("/confirmar/{id}")
-    public ResponseEntity<Carrito> confirmar(@PathVariable Integer id) {
+    public ResponseEntity<CarritoResponseDTO> confirmar(@PathVariable Integer id) {
         return ResponseEntity.ok(service.confirmar(id));
     }
 

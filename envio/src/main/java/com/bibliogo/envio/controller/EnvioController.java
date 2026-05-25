@@ -1,10 +1,16 @@
 package com.bibliogo.envio.controller;
 
+import com.bibliogo.envio.dto.EnvioRequestDTO;
+import com.bibliogo.envio.dto.EnvioResponseDTO;
 import com.bibliogo.envio.model.Envio;
 import com.bibliogo.envio.service.EnvioService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -40,23 +46,31 @@ public class EnvioController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Envio> crear(@RequestBody Envio envio) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(envio));
+    public ResponseEntity<EnvioResponseDTO> crear(
+            @Valid @RequestBody EnvioRequestDTO envioDTO) {
+
+        EnvioResponseDTO creado = service.crear(envioDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/despachar/{id}")
-    public ResponseEntity<Envio> despachar(@PathVariable Integer id) {
+    public ResponseEntity<EnvioResponseDTO> despachar(@PathVariable Integer id) {
+
         return ResponseEntity.ok(service.despachar(id));
     }
 
     @PutMapping("/entregar/{id}")
-    public ResponseEntity<Envio> entregar(@PathVariable Integer id) {
+    public ResponseEntity<EnvioResponseDTO> entregar(@PathVariable Integer id) {
+
         return ResponseEntity.ok(service.entregar(id));
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
+
         service.eliminar(id);
+
         return ResponseEntity.ok("Envío eliminado correctamente");
     }
 }

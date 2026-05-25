@@ -2,8 +2,12 @@ package com.bibliogo.catalogo_service.Service;
 
 import com.bibliogo.catalogo_service.Model.Libro;
 import com.bibliogo.catalogo_service.Repository.LibroRepository;
+import com.bibliogo.catalogo_service.dto.LibroRequestDTO;
+import com.bibliogo.catalogo_service.dto.LibroResponseDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -18,12 +22,12 @@ public class LibroService {
 
     public Libro buscarPorId(Integer id) {
         return repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Libro no encontrado con id: " + id));
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado con id: " + id));
     }
 
     public Libro buscarPorIsbn(String isbn) {
         return repository.findByIsbn(isbn)
-            .orElseThrow(() -> new RuntimeException("Libro no encontrado con isbn: " + isbn));
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado con isbn: " + isbn));
     }
 
     public List<Libro> buscarPorCategoria(String categoria) {
@@ -42,29 +46,50 @@ public class LibroService {
         return repository.findByDisponibilidad("disponible");
     }
 
-    public Libro crear(Libro libro) {
-        if (libro.getStock() > 0) {
+    public LibroResponseDTO crear(LibroRequestDTO dto) {
+
+        Libro libro = new Libro();
+
+        libro.setTitulo(dto.getTitulo());
+        libro.setAutor(dto.getAutor());
+        libro.setCategoria(dto.getCategoria());
+        libro.setIsbn(dto.getIsbn());
+        libro.setStock(dto.getStock());
+        libro.setDescripcion(dto.getDescripcion());
+        libro.setAnioPublicacion(dto.getAnioPublicacion());
+
+        if (dto.getStock() > 0) {
             libro.setDisponibilidad("disponible");
         } else {
             libro.setDisponibilidad("no disponible");
         }
-        return repository.save(libro);
+
+        Libro guardado = repository.save(libro);
+
+        return convertirDTO(guardado);
     }
 
-    public Libro actualizar(Integer id, Libro datos) {
+    public LibroResponseDTO actualizar(Integer id, LibroRequestDTO dto) {
+
         Libro libro = buscarPorId(id);
-        libro.setTitulo(datos.getTitulo());
-        libro.setAutor(datos.getAutor());
-        libro.setCategoria(datos.getCategoria());
-        libro.setStock(datos.getStock());
-        libro.setDescripcion(datos.getDescripcion());
-        libro.setAnioPublicacion(datos.getAnioPublicacion());
-        if (datos.getStock() > 0) {
+
+        libro.setTitulo(dto.getTitulo());
+        libro.setAutor(dto.getAutor());
+        libro.setCategoria(dto.getCategoria());
+        libro.setIsbn(dto.getIsbn());
+        libro.setStock(dto.getStock());
+        libro.setDescripcion(dto.getDescripcion());
+        libro.setAnioPublicacion(dto.getAnioPublicacion());
+
+        if (dto.getStock() > 0) {
             libro.setDisponibilidad("disponible");
         } else {
             libro.setDisponibilidad("no disponible");
         }
-        return repository.save(libro);
+
+        Libro actualizado = repository.save(libro);
+
+        return convertirDTO(actualizado);
     }
 
     public void eliminar(Integer id) {
@@ -72,5 +97,19 @@ public class LibroService {
             throw new RuntimeException("Libro no encontrado con id: " + id);
         }
         repository.deleteById(id);
+    }
+
+    private LibroResponseDTO convertirDTO(Libro libro) {
+        return new LibroResponseDTO(
+                libro.getId(),
+                libro.getTitulo(),
+                libro.getAutor(),
+                libro.getCategoria(),
+                libro.getIsbn(),
+                libro.getStock(),
+                libro.getDisponibilidad(),
+                libro.getDescripcion(),
+                libro.getAnioPublicacion()
+        );
     }
 }
