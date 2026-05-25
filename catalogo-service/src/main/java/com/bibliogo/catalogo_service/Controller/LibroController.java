@@ -57,17 +57,26 @@ public class LibroController {
 
     @PostMapping("/crear")
     public ResponseEntity<LibroResponseDTO> crear(@Valid @RequestBody LibroRequestDTO libroDTO) {
-        LibroResponseDTO creado = service.crear(libroDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(libroDTO));
     }
 
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<LibroResponseDTO> actualizar(
             @PathVariable Integer id,
             @Valid @RequestBody LibroRequestDTO libroDTO) {
+        return ResponseEntity.ok(service.actualizar(id, libroDTO));
+    }
 
-        LibroResponseDTO actualizado = service.actualizar(id, libroDTO);
-        return ResponseEntity.ok(actualizado);
+    // REGLA DE NEGOCIO: reducir stock al prestar
+    @PutMapping("/reducir-stock/{id}")
+    public ResponseEntity<Libro> reducirStock(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.reducirStock(id));
+    }
+
+    // REGLA DE NEGOCIO: aumentar stock al devolver
+    @PutMapping("/aumentar-stock/{id}")
+    public ResponseEntity<Libro> aumentarStock(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.aumentarStock(id));
     }
 
     @DeleteMapping("/eliminar/{id}")

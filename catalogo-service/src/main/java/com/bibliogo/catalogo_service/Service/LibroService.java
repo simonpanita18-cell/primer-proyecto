@@ -22,12 +22,12 @@ public class LibroService {
 
     public Libro buscarPorId(Integer id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Libro no encontrado con id: " + id));
+            .orElseThrow(() -> new RuntimeException("Libro no encontrado con id: " + id));
     }
 
     public Libro buscarPorIsbn(String isbn) {
         return repository.findByIsbn(isbn)
-                .orElseThrow(() -> new RuntimeException("Libro no encontrado con isbn: " + isbn));
+            .orElseThrow(() -> new RuntimeException("Libro no encontrado con isbn: " + isbn));
     }
 
     public List<Libro> buscarPorCategoria(String categoria) {
@@ -47,9 +47,12 @@ public class LibroService {
     }
 
     public LibroResponseDTO crear(LibroRequestDTO dto) {
+        // REGLA DE NEGOCIO: no se puede crear con stock negativo
+        if (dto.getStock() < 0) {
+            throw new RuntimeException("El stock no puede ser negativo");
+        }
 
         Libro libro = new Libro();
-
         libro.setTitulo(dto.getTitulo());
         libro.setAutor(dto.getAutor());
         libro.setCategoria(dto.getCategoria());
@@ -58,6 +61,7 @@ public class LibroService {
         libro.setDescripcion(dto.getDescripcion());
         libro.setAnioPublicacion(dto.getAnioPublicacion());
 
+        // REGLA DE NEGOCIO: disponibilidad automática según stock
         if (dto.getStock() > 0) {
             libro.setDisponibilidad("disponible");
         } else {
@@ -65,14 +69,11 @@ public class LibroService {
         }
 
         Libro guardado = repository.save(libro);
-
         return convertirDTO(guardado);
     }
 
     public LibroResponseDTO actualizar(Integer id, LibroRequestDTO dto) {
-
         Libro libro = buscarPorId(id);
-
         libro.setTitulo(dto.getTitulo());
         libro.setAutor(dto.getAutor());
         libro.setCategoria(dto.getCategoria());
@@ -81,6 +82,7 @@ public class LibroService {
         libro.setDescripcion(dto.getDescripcion());
         libro.setAnioPublicacion(dto.getAnioPublicacion());
 
+        // REGLA DE NEGOCIO: disponibilidad automática según stock
         if (dto.getStock() > 0) {
             libro.setDisponibilidad("disponible");
         } else {
@@ -88,8 +90,28 @@ public class LibroService {
         }
 
         Libro actualizado = repository.save(libro);
-
         return convertirDTO(actualizado);
+    }
+
+    // REGLA DE NEGOCIO: reducir stock al hacer préstamo
+    public Libro reducirStock(Integer id) {
+        Libro libro = buscarPorId(id);
+        if (libro.getStock() <= 0) {
+            throw new RuntimeException("No hay stock disponible para el libro: " + libro.getTitulo());
+        }
+        libro.setStock(libro.getStock() - 1);
+        if (libro.getStock() == 0) {
+            libro.setDisponibilidad("no disponible");
+        }
+        return repository.save(libro);
+    }
+
+    // REGLA DE NEGOCIO: aumentar stock al devolver préstamo
+    public Libro aumentarStock(Integer id) {
+        Libro libro = buscarPorId(id);
+        libro.setStock(libro.getStock() + 1);
+        libro.setDisponibilidad("disponible");
+        return repository.save(libro);
     }
 
     public void eliminar(Integer id) {
@@ -101,15 +123,15 @@ public class LibroService {
 
     private LibroResponseDTO convertirDTO(Libro libro) {
         return new LibroResponseDTO(
-                libro.getId(),
-                libro.getTitulo(),
-                libro.getAutor(),
-                libro.getCategoria(),
-                libro.getIsbn(),
-                libro.getStock(),
-                libro.getDisponibilidad(),
-                libro.getDescripcion(),
-                libro.getAnioPublicacion()
+            libro.getId(),
+            libro.getTitulo(),
+            libro.getAutor(),
+            libro.getCategoria(),
+            libro.getIsbn(),
+            libro.getStock(),
+            libro.getDisponibilidad(),
+            libro.getDescripcion(),
+            libro.getAnioPublicacion()
         );
     }
 }
