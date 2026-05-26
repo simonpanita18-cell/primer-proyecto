@@ -44,7 +44,8 @@ BiblioGo es un sistema de gestión de biblioteca desarrollado con arquitectura d
 - Encriptación de contraseñas con BCrypt
 - Comunicación entre microservicios con WebClient
 - Reglas de negocio (stock automático, disponibilidad, fechas de préstamo)
-- DataLoader con datos iniciales en cada microservicio
+- DataLoader con datos iniciales en UsuariosMicro, catalogo-service, carrito, prestamo y notificaciones.
+- Los demás microservicios fueron probados mediante registros creados desde Postman.
 
 ## Comunicación entre microservicios
 - **prestamo → catalogo**: verifica que el libro existe y tiene stock antes de crear un préstamo
