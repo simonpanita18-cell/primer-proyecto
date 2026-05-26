@@ -1,9 +1,11 @@
 package com.Usuarios.UsuariosMicro.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UsuarioRequestDTO {
 
     @NotBlank(message = "El nombre no puede estar vacío")
@@ -15,6 +17,10 @@ public class UsuarioRequestDTO {
     @NotBlank(message = "El correo no puede estar vacío")
     @Email(message = "El correo debe ser válido")
     private String correo;
+
+    @NotBlank(message = "La contraseña no puede estar vacía")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    private String password;
 
     private String telefono;
     private String direccion;

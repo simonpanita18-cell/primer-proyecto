@@ -4,10 +4,9 @@ import com.Usuarios.UsuariosMicro.Model.Usuario;
 import com.Usuarios.UsuariosMicro.Repository.UsuarioRepository;
 import com.Usuarios.UsuariosMicro.dto.UsuarioRequestDTO;
 import com.Usuarios.UsuariosMicro.dto.UsuarioResponseDTO;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -15,6 +14,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
@@ -39,49 +41,44 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO crear(UsuarioRequestDTO dto) {
-
         Usuario usuario = new Usuario();
-
         usuario.setNombre(dto.getNombre());
         usuario.setApellido(dto.getApellido());
         usuario.setCorreo(dto.getCorreo());
+        // REGLA DE NEGOCIO: encriptar contraseña con BCrypt
+        usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         usuario.setTelefono(dto.getTelefono());
         usuario.setDireccion(dto.getDireccion());
         usuario.setRol(dto.getRol());
         usuario.setEstado("activo");
-
         Usuario guardado = usuarioRepository.save(usuario);
-
         return convertirDTO(guardado);
     }
 
     public UsuarioResponseDTO actualizar(Integer id, UsuarioRequestDTO dto) {
-
         Usuario usuario = buscarPorId(id);
-
         usuario.setNombre(dto.getNombre());
         usuario.setApellido(dto.getApellido());
         usuario.setCorreo(dto.getCorreo());
+        // REGLA DE NEGOCIO: re-encriptar contraseña si se actualiza
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         usuario.setTelefono(dto.getTelefono());
         usuario.setDireccion(dto.getDireccion());
         usuario.setRol(dto.getRol());
-
         Usuario actualizado = usuarioRepository.save(usuario);
-
         return convertirDTO(actualizado);
     }
 
     public void eliminar(Integer id) {
-
         if (!usuarioRepository.existsById(id)) {
             throw new RuntimeException("Usuario no encontrado con id: " + id);
         }
-
         usuarioRepository.deleteById(id);
     }
 
     private UsuarioResponseDTO convertirDTO(Usuario usuario) {
-
         return new UsuarioResponseDTO(
             usuario.getId(),
             usuario.getNombre(),

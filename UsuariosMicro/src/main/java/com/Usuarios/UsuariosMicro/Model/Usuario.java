@@ -30,6 +30,10 @@ public class Usuario {
     @Column(nullable = false, unique = true, length = 150)
     private String correo;
 
+    @NotBlank(message = "La contraseña no puede estar vacía")
+    @Column(nullable = false, length = 255)
+    private String password;
+
     @Column(length = 20)
     private String telefono;
 
