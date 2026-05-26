@@ -1,6 +1,5 @@
 package com.Usuarios.UsuariosMicro.Controller;
 
-import com.Usuarios.UsuariosMicro.Model.Usuario;
 import com.Usuarios.UsuariosMicro.Service.UsuarioService;
 import com.Usuarios.UsuariosMicro.dto.UsuarioRequestDTO;
 import com.Usuarios.UsuariosMicro.dto.UsuarioResponseDTO;
@@ -21,27 +20,27 @@ public class UsuarioController {
     private UsuarioService service;
 
     @GetMapping("/listar")
-    public ResponseEntity<List<Usuario>> listar() {
+    public ResponseEntity<List<UsuarioResponseDTO>> listar() {
         return ResponseEntity.ok(service.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/correo/{correo}")
-    public ResponseEntity<Usuario> buscarPorCorreo(@PathVariable String correo) {
+    public ResponseEntity<UsuarioResponseDTO> buscarPorCorreo(@PathVariable String correo) {
         return ResponseEntity.ok(service.buscarPorCorreo(correo));
     }
 
     @GetMapping("/rol/{rol}")
-    public ResponseEntity<List<Usuario>> buscarPorRol(@PathVariable String rol) {
+    public ResponseEntity<List<UsuarioResponseDTO>> buscarPorRol(@PathVariable String rol) {
         return ResponseEntity.ok(service.buscarPorRol(rol));
     }
 
     @GetMapping("/estado/{estado}")
-    public ResponseEntity<List<Usuario>> buscarPorEstado(@PathVariable String estado) {
+    public ResponseEntity<List<UsuarioResponseDTO>> buscarPorEstado(@PathVariable String estado) {
         return ResponseEntity.ok(service.buscarPorEstado(estado));
     }
 
