@@ -31,4 +31,7 @@ public class Reporte {
 
     @Column(nullable = false)
     private LocalDateTime generadoEn;
+
+    @Column(length = 300)
+    private String url;
 }

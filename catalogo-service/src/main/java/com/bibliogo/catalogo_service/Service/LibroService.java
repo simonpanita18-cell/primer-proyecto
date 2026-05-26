@@ -54,7 +54,7 @@ public class LibroService {
 
     public LibroResponseDTO crear(LibroRequestDTO dto) {
 
-        // REGLA DE NEGOCIO: no se puede crear un libro con stock negativo
+        
         if (dto.getStock() < 0) {
             throw new ConflictoException("El stock no puede ser negativo");
         }
@@ -69,7 +69,7 @@ public class LibroService {
         libro.setDescripcion(dto.getDescripcion());
         libro.setAnioPublicacion(dto.getAnioPublicacion());
 
-        // REGLA DE NEGOCIO: disponibilidad automática según stock
+        
         if (dto.getStock() > 0) {
             libro.setDisponibilidad("disponible");
         } else {
@@ -97,7 +97,7 @@ public class LibroService {
         libro.setDescripcion(dto.getDescripcion());
         libro.setAnioPublicacion(dto.getAnioPublicacion());
 
-        // REGLA DE NEGOCIO: disponibilidad automática según stock
+        
         if (dto.getStock() > 0) {
             libro.setDisponibilidad("disponible");
         } else {
@@ -109,7 +109,7 @@ public class LibroService {
         return convertirDTO(actualizado);
     }
 
-    // REGLA DE NEGOCIO: reducir stock al hacer préstamo
+    
     public Libro reducirStock(Integer id) {
 
         Libro libro = buscarPorId(id);
@@ -129,7 +129,7 @@ public class LibroService {
         return repository.save(libro);
     }
 
-    // REGLA DE NEGOCIO: aumentar stock al devolver préstamo
+    
     public Libro aumentarStock(Integer id) {
 
         Libro libro = buscarPorId(id);

@@ -75,7 +75,7 @@ public class PrestamoService {
 
     public Prestamo buscarPorId(Integer id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Préstamo no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("esa id no se encuentra con ese prestamo " + id));
     }
 
     public List<Prestamo> buscarPorUsuario(Integer usuarioId) {

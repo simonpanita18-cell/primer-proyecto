@@ -43,6 +43,7 @@ public class ReporteService {
         reporte.setTipo(dto.getTipo());
         reporte.setDatos(dto.getDatos());
         reporte.setGeneradoPor(dto.getGeneradoPor());
+        reporte.setUrl(dto.getUrl());
         reporte.setGeneradoEn(LocalDateTime.now());
 
         Reporte guardado = repository.save(reporte);
@@ -66,7 +67,9 @@ public class ReporteService {
                 reporte.getTipo(),
                 reporte.getDatos(),
                 reporte.getGeneradoPor(),
-                reporte.getGeneradoEn()
+                reporte.getGeneradoEn(),
+                reporte.getUrl()
+                
         );
     }
 }

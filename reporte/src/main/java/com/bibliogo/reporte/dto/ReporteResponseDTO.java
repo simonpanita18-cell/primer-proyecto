@@ -14,4 +14,5 @@ public class ReporteResponseDTO {
     private String datos;
     private String generadoPor;
     private LocalDateTime generadoEn;
+    private String url;
 }
