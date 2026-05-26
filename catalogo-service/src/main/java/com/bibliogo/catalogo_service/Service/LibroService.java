@@ -65,7 +65,7 @@ public class LibroService {
         if (dto.getStock() > 0) {
             libro.setDisponibilidad("disponible");
         } else {
-            libro.setDisponibilidad("no disponible");
+            libro.setDisponibilidad("agotado");
         }
 
         Libro guardado = repository.save(libro);
@@ -86,7 +86,7 @@ public class LibroService {
         if (dto.getStock() > 0) {
             libro.setDisponibilidad("disponible");
         } else {
-            libro.setDisponibilidad("no disponible");
+            libro.setDisponibilidad("agotado");
         }
 
         Libro actualizado = repository.save(libro);
