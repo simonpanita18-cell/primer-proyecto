@@ -3,12 +3,17 @@ package com.bibliogo.prestamo.service;
 import com.bibliogo.prestamo.dto.PrestamoRequestDTO;
 import com.bibliogo.prestamo.dto.PrestamoResponseDTO;
 import com.bibliogo.prestamo.dto.PrestamoUpdateDTO;
+import com.bibliogo.prestamo.exeption.ConflictoException;
+import com.bibliogo.prestamo.exeption.RecursoNoEncontradoException;
+import com.bibliogo.prestamo.exeption.ServicioNoDisponibleException;
 import com.bibliogo.prestamo.model.Prestamo;
 import com.bibliogo.prestamo.repository.PrestamoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -49,8 +54,18 @@ public class PrestamoService {
                     .bodyToMono(String.class)
                     .block();
 
+        } catch (WebClientResponseException.NotFound e) {
+            throw new RecursoNoEncontradoException("Usuario no encontrado con id: " + usuarioId);
+
+        } catch (WebClientRequestException e) {
+            throw new ServicioNoDisponibleException(
+                    "UsuariosMicro no está disponible. No se pudo verificar el usuario con id: " + usuarioId
+            );
+
         } catch (Exception e) {
-            throw new RuntimeException("No se pudo verificar el usuario con id: " + usuarioId);
+            throw new ServicioNoDisponibleException(
+                    "Error al comunicarse con UsuariosMicro para verificar el usuario con id: " + usuarioId
+            );
         }
     }
 
@@ -60,7 +75,7 @@ public class PrestamoService {
 
     public Prestamo buscarPorId(Integer id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Préstamo no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Préstamo no encontrado con id: " + id));
     }
 
     public List<Prestamo> buscarPorUsuario(Integer usuarioId) {
@@ -75,29 +90,34 @@ public class PrestamoService {
         return repository.findByUsuarioIdAndEstado(usuarioId, "activo");
     }
 
-   public PrestamoResponseDTO crear(PrestamoRequestDTO dto) {
+    public PrestamoResponseDTO crear(PrestamoRequestDTO dto) {
 
-    verificarLibro(dto.getLibroId());
-    verificarUsuario(dto.getUsuarioId());
+        verificarUsuario(dto.getUsuarioId());
+        verificarLibro(dto.getLibroId());
 
-    Prestamo prestamo = new Prestamo();
+        Prestamo prestamo = new Prestamo();
 
-    prestamo.setUsuarioId(dto.getUsuarioId());
-    prestamo.setLibroId(dto.getLibroId());
-    prestamo.setTituloLibro(dto.getTituloLibro());
-    prestamo.setObservaciones(dto.getObservaciones());
-    prestamo.setFechaPrestamo(LocalDate.now());
-    prestamo.setFechaDevolucion(LocalDate.now().plusDays(7));
-    prestamo.setEstado("activo");
+        prestamo.setUsuarioId(dto.getUsuarioId());
+        prestamo.setLibroId(dto.getLibroId());
+        prestamo.setTituloLibro(dto.getTituloLibro());
+        prestamo.setObservaciones(dto.getObservaciones());
+        prestamo.setFechaPrestamo(LocalDate.now());
+        prestamo.setFechaDevolucion(LocalDate.now().plusDays(7));
+        prestamo.setEstado("activo");
 
-    Prestamo guardado = repository.save(prestamo);
+        Prestamo guardado = repository.save(prestamo);
 
-    return convertirDTO(guardado);
-}
+        return convertirDTO(guardado);
+    }
 
     public PrestamoResponseDTO devolver(Integer id) {
 
         Prestamo prestamo = buscarPorId(id);
+
+        if (prestamo.getEstado().equalsIgnoreCase("devuelto")
+                || prestamo.getEstado().equalsIgnoreCase("devuelto con retraso")) {
+            throw new ConflictoException("El préstamo ya fue devuelto");
+        }
 
         prestamo.setFechaDevolucionReal(LocalDate.now());
 
@@ -126,8 +146,9 @@ public class PrestamoService {
 
     public void eliminar(Integer id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Préstamo no encontrado con id: " + id);
+            throw new RecursoNoEncontradoException("Préstamo no encontrado con id: " + id);
         }
+
         repository.deleteById(id);
     }
 
@@ -140,8 +161,7 @@ public class PrestamoService {
                 prestamo.getFechaPrestamo(),
                 prestamo.getFechaDevolucion(),
                 prestamo.getFechaDevolucionReal(),
-                prestamo.getEstado(),
-                prestamo.getObservaciones()
+                prestamo.getEstado()
         );
     }
 }

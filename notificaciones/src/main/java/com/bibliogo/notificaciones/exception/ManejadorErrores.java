@@ -11,21 +11,28 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ManejadorErrores {
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorDTO> handleRuntime(RuntimeException ex) {
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<ErrorDTO> handleRecursoNoEncontrado(RecursoNoEncontradoException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorDTO(
-                        400,
+                        404,
+                        ex.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(ConflictoException.class)
+    public ResponseEntity<ErrorDTO> handleConflicto(ConflictoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorDTO(
+                        409,
                         ex.getMessage(),
                         LocalDateTime.now()
                 ));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDTO> handleValidation(
-            MethodArgumentNotValidException ex) {
-
+    public ResponseEntity<ErrorDTO> handleValidation(MethodArgumentNotValidException ex) {
         String mensaje = ex.getBindingResult()
                 .getFieldErrors()
                 .get(0)
@@ -39,9 +46,18 @@ public class ManejadorErrores {
                 ));
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorDTO> handleRuntime(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorDTO(
+                        400,
+                        ex.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDTO> handleGeneral(Exception ex) {
-
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorDTO(
                         500,

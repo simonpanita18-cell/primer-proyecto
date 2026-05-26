@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.bibliogo.notificaciones.dto.NotificacionRequestDTO;
 import com.bibliogo.notificaciones.dto.NotificacionResponseDTO;
+import com.bibliogo.notificaciones.exception.ConflictoException;
+import com.bibliogo.notificaciones.exception.RecursoNoEncontradoException;
 import com.bibliogo.notificaciones.model.Notificacion;
 import com.bibliogo.notificaciones.repository.NotificacionRepository;
 
@@ -23,7 +25,9 @@ public class NotificacionService {
 
     public Notificacion buscarPorId(Integer id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notificación no encontrada con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Notificación no encontrada con id: " + id
+                ));
     }
 
     public List<Notificacion> buscarPorUsuario(Integer usuarioId) {
@@ -43,7 +47,6 @@ public class NotificacionService {
     }
 
     public NotificacionResponseDTO crear(NotificacionRequestDTO dto) {
-
         Notificacion notificacion = new Notificacion();
 
         notificacion.setUsuarioId(dto.getUsuarioId());
@@ -58,8 +61,11 @@ public class NotificacionService {
     }
 
     public NotificacionResponseDTO marcarComoLeida(Integer id) {
-
         Notificacion notificacion = buscarPorId(id);
+
+        if (notificacion.getEstado().equalsIgnoreCase("leida")) {
+            throw new ConflictoException("La notificación ya fue marcada como leída");
+        }
 
         notificacion.setEstado("leida");
 
@@ -70,8 +76,11 @@ public class NotificacionService {
 
     public void eliminar(Integer id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Notificación no encontrada con id: " + id);
+            throw new RecursoNoEncontradoException(
+                    "Notificación no encontrada con id: " + id
+            );
         }
+
         repository.deleteById(id);
     }
 

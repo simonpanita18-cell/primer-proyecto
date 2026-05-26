@@ -2,6 +2,7 @@ package com.bibliogo.reporte.service;
 
 import com.bibliogo.reporte.dto.ReporteRequestDTO;
 import com.bibliogo.reporte.dto.ReporteResponseDTO;
+import com.bibliogo.reporte.exception.RecursoNoEncontradoException;
 import com.bibliogo.reporte.model.Reporte;
 import com.bibliogo.reporte.repository.ReporteRepository;
 
@@ -23,7 +24,9 @@ public class ReporteService {
 
     public Reporte buscarPorId(Integer id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reporte no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Reporte no encontrado con id: " + id
+                ));
     }
 
     public List<Reporte> buscarPorTipo(String tipo) {
@@ -35,7 +38,6 @@ public class ReporteService {
     }
 
     public ReporteResponseDTO crear(ReporteRequestDTO dto) {
-
         Reporte reporte = new Reporte();
 
         reporte.setTipo(dto.getTipo());
@@ -49,16 +51,16 @@ public class ReporteService {
     }
 
     public void eliminar(Integer id) {
-
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Reporte no encontrado con id: " + id);
+            throw new RecursoNoEncontradoException(
+                    "Reporte no encontrado con id: " + id
+            );
         }
 
         repository.deleteById(id);
     }
 
     private ReporteResponseDTO convertirDTO(Reporte reporte) {
-
         return new ReporteResponseDTO(
                 reporte.getId(),
                 reporte.getTipo(),

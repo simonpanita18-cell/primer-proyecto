@@ -3,6 +3,7 @@ package com.bibliogo.resena.service;
 import com.bibliogo.resena.dto.ResenaRequestDTO;
 import com.bibliogo.resena.dto.ResenaResponseDTO;
 import com.bibliogo.resena.dto.ResenaUpdateDTO;
+import com.bibliogo.resena.exception.RecursoNoEncontradoException;
 import com.bibliogo.resena.model.Resena;
 import com.bibliogo.resena.repository.ResenaRepository;
 
@@ -24,7 +25,9 @@ public class ResenaService {
 
     public Resena buscarPorId(Integer id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reseña no encontrada con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Reseña no encontrada con id: " + id
+                ));
     }
 
     public List<Resena> buscarPorUsuario(Integer usuarioId) {
@@ -40,7 +43,6 @@ public class ResenaService {
     }
 
     public ResenaResponseDTO crear(ResenaRequestDTO dto) {
-
         Resena resena = new Resena();
 
         resena.setUsuarioId(dto.getUsuarioId());
@@ -55,7 +57,6 @@ public class ResenaService {
     }
 
     public ResenaResponseDTO actualizar(Integer id, ResenaUpdateDTO dto) {
-
         Resena resena = buscarPorId(id);
 
         resena.setCalificacion(dto.getCalificacion());
@@ -67,16 +68,16 @@ public class ResenaService {
     }
 
     public void eliminar(Integer id) {
-
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Reseña no encontrada con id: " + id);
+            throw new RecursoNoEncontradoException(
+                    "Reseña no encontrada con id: " + id
+            );
         }
 
         repository.deleteById(id);
     }
 
     private ResenaResponseDTO convertirDTO(Resena resena) {
-
         return new ResenaResponseDTO(
                 resena.getId(),
                 resena.getUsuarioId(),

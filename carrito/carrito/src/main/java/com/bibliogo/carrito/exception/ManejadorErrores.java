@@ -11,10 +11,22 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ManejadorErrores {
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorDTO> handleRuntime(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorDTO(400, ex.getMessage(), LocalDateTime.now()));
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<ErrorDTO> handleRecursoNoEncontrado(RecursoNoEncontradoException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorDTO(404, ex.getMessage(), LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(ConflictoException.class)
+    public ResponseEntity<ErrorDTO> handleConflicto(ConflictoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorDTO(409, ex.getMessage(), LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(ServicioNoDisponibleException.class)
+    public ResponseEntity<ErrorDTO> handleServicioNoDisponible(ServicioNoDisponibleException ex) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new ErrorDTO(503, ex.getMessage(), LocalDateTime.now()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -27,6 +39,12 @@ public class ManejadorErrores {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorDTO(400, mensaje, LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorDTO> handleRuntime(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorDTO(400, ex.getMessage(), LocalDateTime.now()));
     }
 
     @ExceptionHandler(Exception.class)
