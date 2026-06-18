@@ -3,7 +3,6 @@ package com.bibliogo.prestamo.controller;
 import com.bibliogo.prestamo.dto.PrestamoRequestDTO;
 import com.bibliogo.prestamo.dto.PrestamoResponseDTO;
 import com.bibliogo.prestamo.dto.PrestamoUpdateDTO;
-import com.bibliogo.prestamo.model.Prestamo;
 import com.bibliogo.prestamo.service.PrestamoService;
 
 import jakarta.validation.Valid;
@@ -22,34 +21,33 @@ public class PrestamoController {
     private PrestamoService service;
 
     @GetMapping("/listar")
-    public ResponseEntity<List<Prestamo>> listar() {
+    public ResponseEntity<List<PrestamoResponseDTO>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Prestamo> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<PrestamoResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<Prestamo>> buscarPorUsuario(@PathVariable Integer usuarioId) {
+    public ResponseEntity<List<PrestamoResponseDTO>> buscarPorUsuario(@PathVariable Integer usuarioId) {
         return ResponseEntity.ok(service.buscarPorUsuario(usuarioId));
     }
 
     @GetMapping("/estado/{estado}")
-    public ResponseEntity<List<Prestamo>> buscarPorEstado(@PathVariable String estado) {
+    public ResponseEntity<List<PrestamoResponseDTO>> buscarPorEstado(@PathVariable String estado) {
         return ResponseEntity.ok(service.buscarPorEstado(estado));
     }
 
     @GetMapping("/usuario/{usuarioId}/activos")
-    public ResponseEntity<List<Prestamo>> prestamosActivos(@PathVariable Integer usuarioId) {
+    public ResponseEntity<List<PrestamoResponseDTO>> prestamosActivos(@PathVariable Integer usuarioId) {
         return ResponseEntity.ok(service.prestamosActivosDeUsuario(usuarioId));
     }
 
     @PostMapping("/crear")
     public ResponseEntity<PrestamoResponseDTO> crear(@Valid @RequestBody PrestamoRequestDTO prestamoDTO) {
-        PrestamoResponseDTO creado = service.crear(prestamoDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(prestamoDTO));
     }
 
     @PutMapping("/devolver/{id}")
@@ -61,7 +59,6 @@ public class PrestamoController {
     public ResponseEntity<PrestamoResponseDTO> actualizar(
             @PathVariable Integer id,
             @Valid @RequestBody PrestamoUpdateDTO prestamoDTO) {
-
         return ResponseEntity.ok(service.actualizar(id, prestamoDTO));
     }
 
