@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "EurekaServerApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.eurekaserver.EurekaServerApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
             "name": "CarritoApplication",
             "request": "launch",
             "mainClass": "com.bibliogo.carrito.CarritoApplication",
