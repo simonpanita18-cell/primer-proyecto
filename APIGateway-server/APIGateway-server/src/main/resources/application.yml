@@ -3,8 +3,7 @@ server:
 
 spring:
   application:
-   
-    name: APIGateway_server
+    name: APIGateway-server
   cloud:
     gateway:
       routes:
@@ -12,6 +11,46 @@ spring:
           uri: lb://USUARIOSMICRO
           predicates:
             - Path=/usuarios,/usuarios/**
+
+        - id: ruta-catalogo
+          uri: lb://CATALOGO-SERVICE
+          predicates:
+            - Path=/libros,/libros/**
+
+        - id: ruta-carrito
+          uri: lb://CARRITO
+          predicates:
+            - Path=/carrito,/carrito/**
+
+        - id: ruta-prestamo
+          uri: lb://PRESTAMO
+          predicates:
+            - Path=/prestamos,/prestamos/**
+
+        - id: ruta-envio
+          uri: lb://ENVIO
+          predicates:
+            - Path=/envios,/envios/**
+
+        - id: ruta-pago
+          uri: lb://PAGO
+          predicates:
+            - Path=/pagos,/pagos/**
+
+        - id: ruta-notificaciones
+          uri: lb://NOTIFICACIONES
+          predicates:
+            - Path=/notificaciones,/notificaciones/**
+
+        - id: ruta-resena
+          uri: lb://RESENA
+          predicates:
+            - Path=/resenas,/resenas/**
+
+        - id: ruta-reporte
+          uri: lb://REPORTE
+          predicates:
+            - Path=/reportes,/reportes/**
 
 eureka:
   client:
