@@ -41,9 +41,4 @@ public class ManejadorErrores {
                 .body(new ErrorDTO(400, ex.getMessage(), LocalDateTime.now()));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDTO> handleGeneral(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorDTO(500, "Error interno del servidor", LocalDateTime.now()));
-    }
 }
