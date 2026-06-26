@@ -1,128 +1,248 @@
-#  BiblioGo — Sistema de Gestión de Biblioteca
+# 📚 BiblioGo
 
-## Integrantes
-- Simon Panita
-- Simone Panita
+<div align="center">
 
-## Descripción
-BiblioGo es un sistema de gestión de biblioteca desarrollado con arquitectura de microservicios usando Spring Boot. Permite gestionar usuarios, libros, préstamos, pagos, envíos, reseñas, notificaciones y reportes de forma independiente y escalable.
+## Sistema de Gestión Bibliotecaria basado en Arquitectura de Microservicios
 
-## Tecnologías utilizadas
-- Java 21
-- Spring Boot 3.4.1
-- MySQL
-- Maven
-- Lombok
-- Spring Security + BCrypt
-- Spring Validation (Bean Validation)
-- WebClient (Spring WebFlux)
-- Patrón CSR (Controller - Service - Repository)
-- DTOs (Request y Response)
-- GitHub
+**Examen Transversal – Ingeniería de Software**
 
-## Microservicios implementados
+**Duoc UC**
 
-| Microservicio | Puerto | Base de datos | Descripción |
-|---|---|---|---|
-| UsuariosMicro | 8081 | bibliogo_usuarios | Gestión de usuarios, roles y autenticación con BCrypt |
-| catalogo-service | 8082 | bibliogo_catalogo | Catálogo de libros, stock y disponibilidad |
-| carrito | 8083 | bibliogo_carrito | Carrito de reserva de libros |
-| prestamo | 8084 | bibliogo_prestamos | Préstamos de libros con fechas automáticas |
-| envio | 8085 | bibliogo_envios | Gestión de envíos y entregas |
-| pago | 8086 | bibliogo_pagos | Pagos y multas |
-| notificaciones | 8087 | bibliogo_notificaciones | Notificaciones a usuarios |
-| resena | 8088 | bibliogo_resenas | Reseñas y calificaciones de libros |
-| reporte | 8089 | bibliogo_reportes | Reportes administrativos |
+---
 
-## Funcionalidades implementadas
-- CRUD completo en todos los microservicios
-- Patrón CSR con separación de responsabilidades
-- DTOs para separar entidades de datos de entrada/salida
-- Validaciones con Bean Validation (@NotBlank, @NotNull, @Email, @Min, @Max)
-- Manejo de excepciones centralizado con @RestControllerAdvice
-- Códigos HTTP correctos (200, 201, 400, 500)
-- Encriptación de contraseñas con BCrypt
-- Comunicación entre microservicios con WebClient
-- Reglas de negocio (stock automático, disponibilidad, fechas de préstamo)
-- DataLoader con datos iniciales en UsuariosMicro, catalogo-service, carrito, prestamo y notificaciones.
-- Los demás microservicios fueron probados mediante registros creados desde Postman.
+![Java](https://img.shields.io/badge/Java-21-orange)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.1-green)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![Architecture](https://img.shields.io/badge/Microservices-9-red)
+![Status](https://img.shields.io/badge/Estado-Finalizado-success)
 
-## Comunicación entre microservicios
-- **prestamo → catalogo**: verifica que el libro existe y tiene stock antes de crear un préstamo
-- **prestamo → usuarios**: verifica que el usuario existe antes de crear un préstamo
-- **carrito → catalogo**: verifica que el libro está disponible antes de agregar al carrito
+</div>
 
-## Reglas de negocio principales
-- El stock se reduce automáticamente al crear un préstamo
-- La disponibilidad cambia a "no disponible" cuando el stock llega a 0
-- Las contraseñas se encriptan con BCrypt antes de guardarse
-- La fecha de devolución se asigna automáticamente (7 días después del préstamo)
-- Si se devuelve tarde, el estado cambia a "devuelto con retraso"
-- Las reseñas tienen calificación entre 1 y 5
+---
 
-## Pasos para ejecutar el proyecto
+# 👨‍💻 Desarrollador
 
-### Requisitos previos
-- Java 21
-- Maven
-- MySQL corriendo en localhost:3306
+**Simón Eduardo Hércules Márquez**
 
-### 1. Crear las bases de datos en MySQL
-```sql
-CREATE DATABASE bibliogo_usuarios;
-CREATE DATABASE bibliogo_catalogo;
-CREATE DATABASE bibliogo_carrito;
-CREATE DATABASE bibliogo_prestamos;
-CREATE DATABASE bibliogo_envios;
-CREATE DATABASE bibliogo_pagos;
-CREATE DATABASE bibliogo_notificaciones;
-CREATE DATABASE bibliogo_resenas;
-CREATE DATABASE bibliogo_reportes;
+Carrera: Analista Programador
+
+Institución: Duoc UC
+
+Asignatura: Ingeniería de Software
+
+Docente: Osnellys Andrade
+
+---
+
+# 📖 Descripción
+
+BiblioGo es un sistema de gestión bibliotecaria desarrollado bajo una arquitectura basada en microservicios utilizando Spring Boot. Su objetivo es automatizar los procesos de administración de bibliotecas, permitiendo gestionar usuarios, catálogo de libros, préstamos, pagos, notificaciones, reseñas y reportes de manera independiente, escalable y mantenible.
+
+El proyecto fue desarrollado siguiendo buenas prácticas de Ingeniería de Software, aplicando principios de arquitectura limpia, control de versiones, modelado UML, prototipado en Figma y validación mediante estándares de calidad ISO/IEC 25010.
+
+---
+
+# 🎯 Objetivos
+
+* Automatizar la gestión bibliotecaria.
+* Optimizar el control de préstamos y devoluciones.
+* Mejorar la experiencia de usuarios y administradores.
+* Implementar una arquitectura desacoplada mediante microservicios.
+* Facilitar futuras ampliaciones del sistema.
+
+---
+
+# 🏗 Arquitectura
+
+La solución está compuesta por nueve microservicios independientes, cada uno con responsabilidades claramente definidas.
+
+```
+Cliente
+      │
+      ▼
+API Gateway
+      │
+ ┌────┼─────────────────────────────┐
+ ▼    ▼      ▼      ▼      ▼
+Usuarios  Catálogo  Carrito  Préstamos  Pagos
+                    │
+                    ▼
+        Notificaciones • Reseñas • Reportes
 ```
 
-### 2. Ejecutar cada microservicio
-Abrir una terminal por cada microservicio y ejecutar:
+La comunicación entre servicios se realiza mediante APIs REST utilizando **Spring WebClient**, mientras que el descubrimiento de servicios se gestiona mediante **Eureka Server**.
 
-```bash
-# Usuarios
-cd UsuariosMicro
-mvn spring-boot:run
+---
 
-# Catálogo
-cd catalogo-service
-mvn spring-boot:run
+# ⚙ Tecnologías Utilizadas
 
-# Carrito
-cd carrito/carrito
-mvn spring-boot:run
+* Java 21
+* Spring Boot 3.4.1
+* Spring Data JPA
+* Spring Web
+* Spring Cloud Gateway
+* Eureka Server
+* WebClient
+* MySQL
+* Maven
+* Lombok
+* Bean Validation
+* BCrypt
+* Git
+* GitHub
+* Trello
+* Figma
+* Postman
 
-# Préstamos
-cd prestamo
-mvn spring-boot:run
+---
 
-# Envíos
-cd envio
-mvn spring-boot:run
+# 📦 Microservicios
 
-# Pagos
-cd pago/pago
-mvn spring-boot:run
+| Servicio         | Puerto | Responsabilidad                     |
+| ---------------- | ------ | ----------------------------------- |
+| UsuariosMicro    | 8081   | Gestión de usuarios y autenticación |
+| Catalogo-Service | 8082   | Administración del catálogo         |
+| Carrito          | 8083   | Gestión del carrito                 |
+| Prestamo         | 8084   | Administración de préstamos         |
+| Envío            | 8085   | Gestión de envíos                   |
+| Pago             | 8086   | Administración de pagos             |
+| Notificaciones   | 8087   | Gestión de notificaciones           |
+| Reseña           | 8088   | Calificaciones y comentarios        |
+| Reporte          | 8089   | Reportes administrativos            |
 
-# Notificaciones
-cd notificaciones
-mvn spring-boot:run
+---
 
-# Reseñas
-cd resena
-mvn spring-boot:run
+# 🚀 Funcionalidades
 
-# Reportes
-cd reporte
-mvn spring-boot:run
+### Usuario
+
+* Registro de usuario
+* Inicio de sesión
+* Consulta de catálogo
+* Solicitud de préstamos
+* Devolución de libros
+* Consulta de historial
+* Gestión del perfil
+
+### Administrador
+
+* Gestión de usuarios
+* Gestión del catálogo
+* Administración de préstamos
+* Control de disponibilidad
+* Administración de reportes
+* Gestión de libros
+
+---
+
+# 🔗 Comunicación entre Microservicios
+
+* Prestamo → Catalogo: validación de existencia y disponibilidad del libro.
+* Prestamo → Usuarios: validación de existencia del usuario.
+* Carrito → Catalogo: validación de disponibilidad antes de agregar un libro.
+* Pago → Prestamo: validación del préstamo asociado.
+* Notificaciones → Usuarios: envío de avisos al usuario.
+
+---
+
+# 📋 Reglas de Negocio
+
+* Reducción automática del stock al generar un préstamo.
+* Cambio automático del estado de disponibilidad.
+* Contraseñas protegidas mediante BCrypt.
+* Fecha de devolución generada automáticamente.
+* Cambio de estado por retraso en devoluciones.
+* Validación de reseñas con puntuación entre 1 y 5.
+
+---
+
+# 🧪 Calidad del Software
+
+Durante el desarrollo se aplicaron los siguientes estándares y herramientas:
+
+* ISO/IEC 25010
+* Heurísticas de Nielsen
+* UML (Modelo 4+1)
+* Casos de Uso
+* Plan de Pruebas
+* Figma
+* GitHub
+* Trello
+
+---
+
+# 🔄 Control de Versiones
+
+El proyecto utiliza Git y GitHub para registrar la evolución del código mediante versionamiento semántico.
+
+```
+v1.0.0
+v2.0.0
+v3.0.0
 ```
 
-### 3. Probar con Postman
-Importar colección de Postman y probar los endpoints de cada microservicio.
+La planificación y seguimiento del proyecto fueron gestionados mediante Trello bajo metodología Scrum.
 
-## Repositorio
-https://github.com/simonpanita18-cell/primer-proyecto
+---
+
+# ▶️ Ejecución
+
+## Requisitos
+
+* Java 21
+* Maven
+* MySQL
+
+## Orden de ejecución
+
+1. Eureka Server
+2. API Gateway
+3. UsuariosMicro
+4. Catalogo-Service
+5. Carrito
+6. Prestamo
+7. Pago
+8. Envío
+9. Notificaciones
+10. Reseñas
+11. Reportes
+
+Posteriormente, los endpoints pueden ser validados mediante Postman.
+
+---
+
+# 📁 Organización del Proyecto
+
+```
+BiblioGo
+│
+├── api-gateway
+├── eureka-server
+├── UsuariosMicro
+├── catalogo-service
+├── carrito
+├── prestamo
+├── pago
+├── envio
+├── notificaciones
+├── resena
+├── reporte
+└── README.md
+```
+
+---
+
+# 🔮 Trabajo Futuro
+
+* Implementación de autenticación JWT.
+* Despliegue en servicios Cloud.
+* Dashboard analítico.
+* Sistema de reservas.
+* Aplicación móvil.
+* Recomendaciones inteligentes mediante IA.
+
+---
+
+# 📜 Licencia
+
+Proyecto desarrollado con fines académicos para el Examen Transversal de Ingeniería de Software de Duoc UC.
