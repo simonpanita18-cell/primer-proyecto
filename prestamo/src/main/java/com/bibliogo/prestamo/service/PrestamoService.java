@@ -30,13 +30,13 @@ public class PrestamoService {
     @Autowired
     private WebClient webClient;
 
-    // ── VERIFICACIONES ──────────────────────────────────────────
+    //  VERIFICACIONES 
 
     // Verifica que el usuario existe en UsuariosMicro
     private void verificarUsuario(Integer usuarioId) {
         try {
             webClient.get()
-                    .uri("http://localhost:8081/usuarios/" + usuarioId)
+                    .uri("http://usuarios-micro/usuarios/" + usuarioId)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -60,7 +60,7 @@ public class PrestamoService {
     private void verificarLibro(Integer libroId) {
         try {
             String respuesta = webClient.get()
-                    .uri("http://localhost:8082/libros/" + libroId)
+                    .uri("http://catalogo-service/libros/" + libroId)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -92,11 +92,11 @@ public class PrestamoService {
         }
     }
 
-    // ✅ REGLA DE NEGOCIO: reduce el stock al crear un préstamo
+    // REGLA DE NEGOCIO: reduce el stock al crear un préstamo
     private void reducirStockLibro(Integer libroId) {
         try {
             webClient.put()
-                    .uri("http://localhost:8082/libros/reducir-stock/" + libroId)
+                    .uri("http://catalogo-service/libros/reducir-stock/" + libroId)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -122,11 +122,11 @@ public class PrestamoService {
         }
     }
 
-    // ✅ REGLA DE NEGOCIO: aumenta el stock al devolver un préstamo
+    // REGLA DE NEGOCIO: aumenta el stock al devolver un préstamo
     private void aumentarStockLibro(Integer libroId) {
         try {
             webClient.put()
-                    .uri("http://localhost:8082/libros/aumentar-stock/" + libroId)
+                    .uri("http://catalogo-service/libros/aumentar-stock/" + libroId)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -144,7 +144,7 @@ public class PrestamoService {
         }
     }
 
-    // ── CRUD ────────────────────────────────────────────────────
+    // CRUD
 
     public List<PrestamoResponseDTO> listar() {
         log.info("Listando todos los préstamos");
@@ -208,7 +208,7 @@ public class PrestamoService {
 
         Prestamo guardado = repository.save(prestamo);
 
-        // ✅ REGLA DE NEGOCIO: reducir stock al crear préstamo
+        // REGLA DE NEGOCIO: reducir stock al crear préstamo
         reducirStockLibro(dto.getLibroId());
 
         log.info("Préstamo creado con id: {}", guardado.getId());
@@ -238,7 +238,7 @@ public class PrestamoService {
 
         Prestamo actualizado = repository.save(prestamo);
 
-        // ✅ REGLA DE NEGOCIO: aumentar stock al devolver préstamo
+        // REGLA DE NEGOCIO: aumentar stock al devolver préstamo
         aumentarStockLibro(prestamo.getLibroId());
 
         log.info("Préstamo id: {} devuelto con estado: {}", id, actualizado.getEstado());
@@ -275,7 +275,7 @@ public class PrestamoService {
         log.info("Préstamo con id: {} eliminado correctamente", id);
     }
 
-    // ── CONVERSIÓN ──────────────────────────────────────────────
+    // CONVERSIÓN 
 
     private PrestamoResponseDTO convertirDTO(Prestamo prestamo) {
         return new PrestamoResponseDTO(

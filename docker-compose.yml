@@ -1,0 +1,94 @@
+services:
+
+  # ----------------------------------------------------------
+  # MySQL
+  # ----------------------------------------------------------
+  mysql:
+    image: mysql:8.4
+    container_name: mysql-bibliogo
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: bibliogo_usuarios
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # Eureka Server
+  # ----------------------------------------------------------
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # UsuariosMicro
+  # ----------------------------------------------------------
+  usuarios-micro:
+    build:
+      context: ./UsuariosMicro
+      dockerfile: Dockerfile
+    container_name: usuarios-micro
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # catalogo-service
+  # ----------------------------------------------------------
+  catalogo-service:
+    build:
+      context: ./catalogo-service
+      dockerfile: Dockerfile
+    container_name: catalogo-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # PENDIENTES — los iremos agregando a medida que tengan
+  # su Dockerfile y application-docker.properties listos:
+  # carrito, prestamo, pago, notificaciones, envio, resena,
+  # reporte, api-gateway
+  # ----------------------------------------------------------
+
+volumes:
+  mysql-data:
+
+networks:
+  bibliogo-net:
+    driver: bridge

@@ -34,7 +34,7 @@ public class CarritoService {
 
         try {
             String respuesta = webClient.get()
-                    .uri("http://localhost:8082/libros/" + libroId)
+                    .uri("http://catalogo-service/libros/" + libroId)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
