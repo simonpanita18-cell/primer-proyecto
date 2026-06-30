@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CarritoApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.carrito.CarritoApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
             "name": "ApiGatewayApplication",
             "request": "launch",
             "mainClass": "com.bibliogo.APIGateway_server.ApiGatewayApplication",
