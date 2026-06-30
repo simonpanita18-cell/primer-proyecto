@@ -34,7 +34,7 @@ public class PagoService {
 
         try {
             webClient.get()
-                    .uri("http://localhost:8084/prestamos/" + prestamoId)
+                    .uri("http://prestamo/prestamos/" + prestamoId)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
