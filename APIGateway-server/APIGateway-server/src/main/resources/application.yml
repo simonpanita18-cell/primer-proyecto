@@ -10,47 +10,47 @@ spring:
         - id: ruta-usuarios
           uri: lb://USUARIOSMICRO
           predicates:
-            - Path=/usuarios,/usuarios/**
+            - Path=/usuarios/**
 
         - id: ruta-catalogo
           uri: lb://CATALOGO-SERVICE
           predicates:
-            - Path=/libros,/libros/**
+            - Path=/libros/**
 
         - id: ruta-carrito
           uri: lb://CARRITO
           predicates:
-            - Path=/carrito,/carrito/**
+            - Path=/carrito/**
 
         - id: ruta-prestamo
           uri: lb://PRESTAMO
           predicates:
-            - Path=/prestamos,/prestamos/**
+            - Path=/prestamos/**
 
         - id: ruta-envio
           uri: lb://ENVIO
           predicates:
-            - Path=/envios,/envios/**
+            - Path=/envios/**
 
         - id: ruta-pago
           uri: lb://PAGO
           predicates:
-            - Path=/pagos,/pagos/**
+            - Path=/pagos/**
 
         - id: ruta-notificaciones
           uri: lb://NOTIFICACIONES
           predicates:
-            - Path=/notificaciones,/notificaciones/**
+            - Path=/notificaciones/**
 
         - id: ruta-resena
           uri: lb://RESENA
           predicates:
-            - Path=/resenas,/resenas/**
+            - Path=/resenas/**
 
         - id: ruta-reporte
           uri: lb://REPORTE
           predicates:
-            - Path=/reportes,/reportes/**
+            - Path=/reportes/**
 
 eureka:
   client:
@@ -67,3 +67,4 @@ eureka:
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: INFO
