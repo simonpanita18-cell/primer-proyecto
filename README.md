@@ -182,4 +182,4 @@ BiblioGo
 ├── reporte/
 └── README.md
 📜 Licencia
-Proyecto desarrollado con fines académicos para el Examen Transversal de Ingeniería de Software de Duoc UC. All rights reserved © 2026.
+Proyecto desarrollado con fines académicos para el Examen Transversal de Ingeniería de Softwarede Duoc UC. All rights reserved © 2026.

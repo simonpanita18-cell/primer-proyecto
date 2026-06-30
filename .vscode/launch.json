@@ -5,6 +5,13 @@
             "name": "ApiGatewayApplication",
             "request": "launch",
             "mainClass": "com.bibliogo.APIGateway_server.ApiGatewayApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
+            "name": "ApiGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.bibliogo.APIGateway_server.ApiGatewayApplication",
             "projectName": "APIGateway-server"
         },
         {
