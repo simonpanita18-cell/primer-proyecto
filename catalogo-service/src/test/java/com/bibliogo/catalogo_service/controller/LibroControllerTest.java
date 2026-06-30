@@ -15,7 +15,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+//que en listar libros devuelva un 201 iscreated
 @WebMvcTest(LibroController.class)
 public class LibroControllerTest {
 
@@ -42,7 +42,7 @@ public class LibroControllerTest {
         when(service.listar()).thenReturn(libros);
 
         mockMvc.perform(get("/libros/listar"))
-               .andExpect(status().isOk())
+               .andExpect(status().isCreated())
                .andExpect(jsonPath("$[0].titulo").value("Cien años de soledad"))
                .andExpect(jsonPath("$[0].autor").value("Gabriel García Márquez"));
     }
