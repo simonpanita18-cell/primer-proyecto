@@ -12,7 +12,7 @@
 
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.1-green)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![MySQL](https://img.shields.io/badge/MySQL-8.4-blue)
 ![Architecture](https://img.shields.io/badge/Microservices-9-red)
 ![Status](https://img.shields.io/badge/Estado-Finalizado-success)
 
@@ -23,14 +23,10 @@
 # 👨‍💻 Desarrollador
 
 **Simón Eduardo Hércules Márquez**
-
-Carrera: Analista Programador
-
-Institución: Duoc UC
-
-Asignatura: Ingeniería de Software
-
-Docente: Osnellys Andrade
+* **Carrera:** Analista Programador
+* **Institución:** Duoc UC
+* **Asignatura:** Ingeniería de Software
+* **Docente:** Osnellys Andrade
 
 ---
 
@@ -54,23 +50,22 @@ El proyecto fue desarrollado siguiendo buenas prácticas de Ingeniería de Softw
 
 # 🏗 Arquitectura
 
-La solución está compuesta por nueve microservicios independientes, cada uno con responsabilidades claramente definidas.
+La solución está compuesta por un servidor de descubrimiento, un enrutador central y nueve microservicios independientes, cada uno con responsabilidades claramente definidas.
 
-```
 Cliente
-      │
-      ▼
-API Gateway
-      │
- ┌────┼─────────────────────────────┐
- ▼    ▼      ▼      ▼      ▼
+│
+▼
+API Gateway (Puerto 8090)
+│
+┌────┼─────────────────────────────┐
+▼    ▼      ▼      ▼      ▼
 Usuarios  Catálogo  Carrito  Préstamos  Pagos
-                    │
-                    ▼
-        Notificaciones • Reseñas • Reportes
-```
+│
+▼
+Notificaciones • Reseñas • Reportes
 
-La comunicación entre servicios se realiza mediante APIs REST utilizando **Spring WebClient**, mientras que el descubrimiento de servicios se gestiona mediante **Eureka Server**.
+
+La comunicación entre servicios se realiza mediante APIs REST utilizando **Spring WebClient**, mientras que el descubrimiento de servicios se gestiona dinámicamente mediante **Eureka Server**.
 
 ---
 
@@ -79,170 +74,112 @@ La comunicación entre servicios se realiza mediante APIs REST utilizando **Spri
 * Java 21
 * Spring Boot 3.4.1
 * Spring Data JPA
-* Spring Web
 * Spring Cloud Gateway
 * Eureka Server
 * WebClient
-* MySQL
+* MySQL 8.4 (Dockerizado)
 * Maven
 * Lombok
 * Bean Validation
 * BCrypt
-* Git
-* GitHub
+* Git / GitHub
+* Docker / Docker Compose
 * Trello
 * Figma
 * Postman
 
 ---
 
-# 📦 Microservicios
+# 📦 Infraestructura y Microservicios (Puertos Actualizados)
 
-| Servicio         | Puerto | Responsabilidad                     |
-| ---------------- | ------ | ----------------------------------- |
-| UsuariosMicro    | 8081   | Gestión de usuarios y autenticación |
-| Catalogo-Service | 8082   | Administración del catálogo         |
-| Carrito          | 8083   | Gestión del carrito                 |
-| Prestamo         | 8084   | Administración de préstamos         |
-| Envío            | 8085   | Gestión de envíos                   |
-| Pago             | 8086   | Administración de pagos             |
-| Notificaciones   | 8087   | Gestión de notificaciones           |
-| Reseña           | 8088   | Calificaciones y comentarios        |
-| Reporte          | 8089   | Reportes administrativos            |
-
----
-
-# 🚀 Funcionalidades
-
-### Usuario
-
-* Registro de usuario
-* Inicio de sesión
-* Consulta de catálogo
-* Solicitud de préstamos
-* Devolución de libros
-* Consulta de historial
-* Gestión del perfil
-
-### Administrador
-
-* Gestión de usuarios
-* Gestión del catálogo
-* Administración de préstamos
-* Control de disponibilidad
-* Administración de reportes
-* Gestión de libros
+| Componente / Servicio | Puerto Externo | Puerto Interno | Responsabilidad |
+| :--- | :---: | :---: | :--- |
+| **MySQL (Base de Datos)** | `3307` | `3306` | Almacenamiento relacional de datos persistentes |
+| **Eureka Server** | `8761` | `8761` | Servidor de descubrimiento de servicios |
+| **API Gateway** | `8090` | `8090` | Enrutador centralizado y punto único de entrada |
+| **UsuariosMicro** | `8081` | `8081` | Gestión de usuarios, roles y autenticación |
+| **Catalogo-Service** | `8082` | `8082` | Administración del catálogo de libros y stock |
+| **Carrito** | `8083` | `8083` | Gestión temporal de elementos a reservar/prestar |
+| **Prestamo** | `8084` | `8084` | Administración del ciclo de préstamos y devoluciones |
+| **Pago** | `8085` | `8085` | Procesamiento y registro de transacciones de pago |
+| **Notificaciones** | `8086` | `8086` | Despacho de avisos de estado y alertas al usuario |
+| **Envío** | `8087` | `8087` | Gestión de logística de envíos físicos de libros |
+| **Reseña** | `8088` | `8088` | Gestión de calificaciones (1-5) y comentarios |
+| **Reporte** | `8089` | `8089` | Consolidación de métricas e informes administrativos |
 
 ---
 
-# 🔗 Comunicación entre Microservicios
+# 🚀 Funcionalidades Principales
 
-* Prestamo → Catalogo: validación de existencia y disponibilidad del libro.
-* Prestamo → Usuarios: validación de existencia del usuario.
-* Carrito → Catalogo: validación de disponibilidad antes de agregar un libro.
-* Pago → Prestamo: validación del préstamo asociado.
-* Notificaciones → Usuarios: envío de avisos al usuario.
+### Rol: Usuario
+* Registro e inicio de sesión seguro (Contraseñas con hash BCrypt).
+* Consulta interactiva del catálogo disponible.
+* Gestión de carrito de solicitudes y generación de préstamos.
+* Seguimiento e historial de estados físicos del envío y devoluciones.
+* Retroalimentación mediante calificaciones y comentarios en libros leídos.
+
+### Rol: Administrador
+* Gestión integral del ciclo de vida de usuarios y catálogo de stock.
+* Control total y penalizaciones sobre retrasos en devoluciones automáticas.
+* Visualización y exportación de reportes administrativos y de uso del sistema.
 
 ---
 
-# 📋 Reglas de Negocio
+# 📋 Reglas de Negocio Implementadas
 
-* Reducción automática del stock al generar un préstamo.
-* Cambio automático del estado de disponibilidad.
-* Contraseñas protegidas mediante BCrypt.
-* Fecha de devolución generada automáticamente.
-* Cambio de estado por retraso en devoluciones.
-* Validación de reseñas con puntuación entre 1 y 5.
+* Reducción automática del stock del Catálogo al confirmarse un préstamo.
+* Bloqueo transaccional de libros si la disponibilidad física es cero.
+* Generación automatizada de fechas límite de devolución calculadas por el sistema.
+* Validación estricta a nivel controlador de reseñas (rango numérico obligatorio entre 1 y 5).
 
 ---
 
 # 🧪 Calidad del Software
 
 Durante el desarrollo se aplicaron los siguientes estándares y herramientas:
-
-* ISO/IEC 25010
-* Heurísticas de Nielsen
-* UML (Modelo 4+1)
-* Casos de Uso
-* Plan de Pruebas
-* Figma
-* GitHub
-* Trello
+* **ISO/IEC 25010:** Evaluación de características de mantenibilidad, compatibilidad y seguridad.
+* **UML (Modelo 4+1):** Diseño arquitectónico detallado a nivel de casos de uso y diagramas de componentes.
+* **Pruebas Unitarias:** Implementación con JUnit y Mockito para validación de la lógica crítica.
 
 ---
 
-# 🔄 Control de Versiones
+# ▶️ Despliegue y Execution con Docker Compose
 
-El proyecto utiliza Git y GitHub para registrar la evolución del código mediante versionamiento semántico.
+## Requisitos Previos
+* Docker Desktop activo en la máquina anfitriona.
+* Terminal de comandos (PowerShell / CMD / Bash).
 
-```
-v1.0.0
-v2.0.0
-v3.0.0
-```
+## Orquestación del Entorno (Orden Automático)
+Gracias al uso de las directivas `depends_on` con criterios de salud (`service_healthy`), la infraestructura se autogestiona en el siguiente orden estricto de resiliencia:
 
-La planificación y seguimiento del proyecto fueron gestionados mediante Trello bajo metodología Scrum.
+1. **mysql-bibliogo** (Espera a pasar el control de salud mediante `mysqladmin ping`).
+2. **eureka-server** (Inicia inmediatamente después del motor SQL).
+3. **api-gateway y Microservicios** (Arrancan en paralelo una vez detectados los servicios base).
 
----
+Para compilar las imágenes locales (utilizando sus respectivos `Dockerfile`) y encender la red completa en segundo plano, ejecute desde la raíz del proyecto:
 
-# ▶️ Ejecución
+```bash
+docker compose up -d --build
+Para verificar la operatividad y salud de los contenedores:
 
-## Requisitos
-
-* Java 21
-* Maven
-* MySQL
-
-## Orden de ejecución
-
-1. Eureka Server
-2. API Gateway
-3. UsuariosMicro
-4. Catalogo-Service
-5. Carrito
-6. Prestamo
-7. Pago
-8. Envío
-9. Notificaciones
-10. Reseñas
-11. Reportes
-
-Posteriormente, los endpoints pueden ser validados mediante Postman.
-
----
-
-# 📁 Organización del Proyecto
-
-```
+Bash
+docker compose ps
+📁 Organización del Repositorio
+Plaintext
 BiblioGo
-│
-├── api-gateway
-├── eureka-server
-├── UsuariosMicro
-├── catalogo-service
-├── carrito
-├── prestamo
-├── pago
-├── envio
-├── notificaciones
-├── resena
-├── reporte
+├── docker-compose.yml
+├── init-db.sql
+├── api-gateway/
+├── eureka-server/
+├── UsuariosMicro/
+├── catalogo-service/
+├── carrito/
+├── prestamo/
+├── pago/
+├── notificaciones/
+├── envio/
+├── resena/
+├── reporte/
 └── README.md
-```
-
----
-
-# 🔮 Trabajo Futuro
-
-* Implementación de autenticación JWT.
-* Despliegue en servicios Cloud.
-* Dashboard analítico.
-* Sistema de reservas.
-* Aplicación móvil.
-* Recomendaciones inteligentes mediante IA.
-
----
-
-# 📜 Licencia
-
-Proyecto desarrollado con fines académicos para el Examen Transversal de Ingeniería de Software de Duoc UC.
+📜 Licencia
+Proyecto desarrollado con fines académicos para el Examen Transversal de Ingeniería de Software de Duoc UC. All rights reserved © 2026.

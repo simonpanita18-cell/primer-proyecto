@@ -8,47 +8,47 @@ spring:
     gateway:
       routes:
         - id: ruta-usuarios
-          uri: lb://USUARIOSMICRO
+          uri: lb://UsuariosMicro
           predicates:
             - Path=/usuarios/**
 
         - id: ruta-catalogo
-          uri: lb://CATALOGO-SERVICE
+          uri: lb://Catalogo-service
           predicates:
             - Path=/libros/**
 
         - id: ruta-carrito
-          uri: lb://CARRITO
+          uri: lb://Carrito
           predicates:
             - Path=/carrito/**
 
         - id: ruta-prestamo
-          uri: lb://PRESTAMO
+          uri: lb://prestamo
           predicates:
             - Path=/prestamos/**
 
         - id: ruta-envio
-          uri: lb://ENVIO
+          uri: lb://envio
           predicates:
             - Path=/envios/**
 
         - id: ruta-pago
-          uri: lb://PAGO
+          uri: lb://pago
           predicates:
             - Path=/pagos/**
 
         - id: ruta-notificaciones
-          uri: lb://NOTIFICACIONES
+          uri: lb://notificaciones
           predicates:
             - Path=/notificaciones/**
 
         - id: ruta-resena
-          uri: lb://RESENA
+          uri: lb://resena
           predicates:
             - Path=/resenas/**
 
         - id: ruta-reporte
-          uri: lb://REPORTE
+          uri: lb://reporte
           predicates:
             - Path=/reportes/**
 

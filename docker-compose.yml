@@ -1,7 +1,7 @@
 services:
 
   # ----------------------------------------------------------
-  # MySQL
+  # Base de Datos: MySQL
   # ----------------------------------------------------------
   mysql:
     image: mysql:8.4
@@ -24,7 +24,7 @@ services:
       - bibliogo-net
 
   # ----------------------------------------------------------
-  # Eureka Server
+  # Servidor de Descubrimiento: Eureka Server
   # ----------------------------------------------------------
   eureka-server:
     build:
@@ -38,12 +38,29 @@ services:
       - bibliogo-net
 
   # ----------------------------------------------------------
-  # UsuariosMicro
+  # Enrutador Central: API Gateway
+  # ----------------------------------------------------------
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8090:8090"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # 1. UsuariosMicro (Puerto 8081)
   # ----------------------------------------------------------
   usuarios-micro:
     build:
       context: ./UsuariosMicro
-      dockerfile: Dockerfile
     container_name: usuarios-micro
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -59,12 +76,11 @@ services:
       - bibliogo-net
 
   # ----------------------------------------------------------
-  # catalogo-service
+  # 2. Catalogo-Service (Puerto 8082)
   # ----------------------------------------------------------
   catalogo-service:
     build:
       context: ./catalogo-service
-      dockerfile: Dockerfile
     container_name: catalogo-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -80,12 +96,136 @@ services:
       - bibliogo-net
 
   # ----------------------------------------------------------
-  # PENDIENTES — los iremos agregando a medida que tengan
-  # su Dockerfile y application-docker.properties listos:
-  # carrito, prestamo, pago, notificaciones, envio, resena,
-  # reporte, api-gateway
+  # 3. Carrito (Puerto 8083)
   # ----------------------------------------------------------
+  carrito-service:
+    build:
+      context: ./carrito
+    container_name: carrito-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8083:8083"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
 
+  # ----------------------------------------------------------
+  # 4. Prestamo (Puerto 8084)
+  # ----------------------------------------------------------
+  prestamo-service:
+    build:
+      context: ./prestamo
+    container_name: prestamo-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8084:8084"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # 5. Envío (Puerto 8087
+  # ----------------------------------------------------------
+  envio-service:
+    build:
+      context: ./envio
+    container_name: envio-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8087:8087"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # 6. Pago (Puerto 8085
+  # ----------------------------------------------------------
+  pago-service:
+    build:
+      context: ./pago
+    container_name: pago-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8085:8085"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # 7. Notificaciones (Puerto 8086)
+  # ----------------------------------------------------------
+  notificaciones-service:
+    build:
+      context: ./notificaciones
+    container_name: notificaciones-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8086:8086"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # 8. Reseña (Puerto 8088)
+  # ----------------------------------------------------------
+  resena-service:
+    build:
+      context: ./resena
+    container_name: resena-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8088:8088"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+  # ----------------------------------------------------------
+  # 9. Reporte (Puerto 8089)
+  # ----------------------------------------------------------
+  reporte-service:
+    build:
+      context: ./reporte
+    container_name: reporte-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8089:8089"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - bibliogo-net
+
+# ----------------------------------------------------------
+# Volúmenes y Redes Globales
+# ----------------------------------------------------------
 volumes:
   mysql-data:
 
