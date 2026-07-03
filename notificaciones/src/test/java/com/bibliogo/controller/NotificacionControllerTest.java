@@ -1,4 +1,4 @@
-package com.bibliogo.Controller;
+package com.bibliogo.controller;
 
 import com.bibliogo.notificaciones.controller.NotificacionController;
 import com.bibliogo.notificaciones.model.Notificacion;

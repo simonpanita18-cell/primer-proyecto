@@ -35,6 +35,12 @@ services:
     SPRING_PROFILES_ACTIVE: docker   
     ports:
       - "8761:8761"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8761/eureka/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     restart: on-failure
     networks:
       - bibliogo-net
@@ -53,7 +59,7 @@ services:
     depends_on:
       
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
@@ -73,7 +79,7 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
@@ -93,7 +99,7 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
@@ -113,7 +119,7 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
@@ -133,13 +139,13 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
 
   # ----------------------------------------------------------
-  # 5. Envío (Puerto 8087
+  # 5. Envío (Puerto 8087)
   # ----------------------------------------------------------
   envio-service:
     build:
@@ -153,13 +159,13 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
 
   # ----------------------------------------------------------
-  # 6. Pago (Puerto 8085
+  # 6. Pago (Puerto 8085)
   # ----------------------------------------------------------
   pago-service:
     build:
@@ -173,7 +179,7 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
@@ -193,7 +199,7 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
@@ -213,7 +219,7 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
@@ -233,7 +239,7 @@ services:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     restart: on-failure
     networks:
       - bibliogo-net
