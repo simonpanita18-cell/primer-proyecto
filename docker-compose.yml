@@ -32,7 +32,7 @@ services:
       dockerfile: Dockerfile
     container_name: eureka-server
     environment:
-    SPRING_PROFILES_ACTIVE: docker   
+      SPRING_PROFILES_ACTIVE: docker   # Ahora está correctamente indentado
     ports:
       - "8761:8761"
     healthcheck:
@@ -44,7 +44,6 @@ services:
     restart: on-failure
     networks:
       - bibliogo-net
-
   # ----------------------------------------------------------
   # Enrutador Central: API Gateway
   # ----------------------------------------------------------
