@@ -20,7 +20,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.4-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Maven](https://img.shields.io/badge/Maven-3.8+-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
-[![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![Auth](https://img.shields.io/badge/Auth-JWT%20(Planeado)-lightgrey?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](#-mejoras-futuras)
 [![Estado](https://img.shields.io/badge/Estado-Finalizado-success?style=for-the-badge)](#-estado-del-proyecto)
 [![Licencia](https://img.shields.io/badge/Licencia-Académica-lightgrey?style=for-the-badge)](#-licencia)
 
@@ -68,7 +68,9 @@
 
 **BiblioGo** es un sistema de gestión bibliotecaria de alta disponibilidad, construido bajo una **arquitectura de microservicios**, enfocado en automatizar los procesos operativos de una biblioteca: gestión de usuarios, catálogo de libros con control de stock, préstamos, pagos de multas, logística de envíos, notificaciones, reseñas y reportes administrativos.
 
-El sistema está compuesto por **nueve microservicios independientes**, cada uno con su propia responsabilidad de negocio, que se registran dinámicamente en un **Eureka Server** y son orquestados a través de un **API Gateway** como punto único de entrada. La seguridad se gestiona mediante **autenticación JWT**, y la comunicación entre servicios se realiza vía REST con **Spring WebClient**.
+El sistema está compuesto por **nueve microservicios independientes**, cada uno con su propia responsabilidad de negocio, que se registran dinámicamente en un **Eureka Server** y son orquestados a través de un **API Gateway** como punto único de entrada. La comunicación entre servicios se realiza vía REST con **Spring WebClient**.
+
+> 🚧 **Nota:** la autenticación con JWT está planificada pero **aún no implementada** en esta versión (ver [Mejoras futuras](#-mejoras-futuras)). Por ahora, todos los endpoints son de acceso directo sin token.
 
 El proyecto fue desarrollado como parte del **Examen Transversal de la asignatura de Ingeniería de Software de Duoc UC**, con el código full-stack construido en el ramo de **Full Stack 1** (profesor Cristian Vega) y complementado con la documentación de arquitectura y calidad de Ingeniería de Software. La estructura y documentación del repositorio siguen las convenciones de un proyecto open source profesional, de modo que cualquier persona pueda clonarlo, levantarlo con Docker y comenzar a interactuar con la API sin asistencia adicional.
 
@@ -140,7 +142,7 @@ Cliente ──▶ API Gateway ───────────┼────�
 ```
 
 - 🧭 **Eureka Server** — todos los servicios se registran ahí al arrancar.
-- 🚪 **API Gateway** — único punto de entrada; enruta y filtra seguridad (JWT).
+- 🚪 **API Gateway** — único punto de entrada; enruta cada petición al microservicio correcto.
 - 🔗 **WebClient** — comunicación REST entre microservicios (ej. Préstamo ↔ Catálogo).
 - 🗄 **MySQL dockerizado** — esquema `bibliogo_usuarios` como base principal.
 
@@ -150,7 +152,7 @@ Cliente ──▶ API Gateway ───────────┼────�
 
 Ejemplo: un usuario confirma un préstamo.
 
-1. **Cliente** envía `POST /api/prestamo/confirmar` al **Gateway** (`localhost:8090`), con su JWT en el header.
+1. **Cliente** envía `POST /api/prestamo/confirmar` al **Gateway** (`localhost:8090`).
 2. El **Gateway** valida el token y consulta a **Eureka** la ubicación de `prestamo-service`.
 3. `prestamo-service` llama vía **WebClient** a `catalogo-service` para verificar stock.
 4. Si hay stock, `catalogo-service` **reduce el inventario** y responde OK.
@@ -170,7 +172,7 @@ Ejemplo: un usuario confirma un préstamo.
 | Comunicación entre servicios | Spring WebClient |
 | Base de datos | MySQL 8.4 (dockerizado) |
 | Build tool | Maven 3.8+ |
-| Seguridad | JWT + BCrypt |
+| Seguridad | BCrypt (JWT planeado, ver [Mejoras futuras](#-mejoras-futuras)) |
 | Contenedores | Docker & Docker Compose |
 | Documentación de API | Swagger / OpenAPI |
 | Testing | JUnit + Mockito |
@@ -186,7 +188,7 @@ Ejemplo: un usuario confirma un préstamo.
 | `mysql-bibliogo` | `3307` | Base de datos relacional (esquema principal: `bibliogo_usuarios`) |
 | `eureka-server` | `8761` | Servidor de descubrimiento de instancias (Service Discovery) |
 | `api-gateway` | `8090` | Gateway principal, enrutador central y filtro de seguridad |
-| `usuarios-micro` | `8081` | Gestión de usuarios, roles y generación de JWT |
+| `usuarios-micro` | `8081` | Gestión de usuarios (CRUD) y roles |
 | `catalogo-service` | `8082` | Administración de libros, autores, categorías y stock |
 | `carrito-service` | `8083` | Persistencia temporal de reservas antes del préstamo |
 | `prestamo-service` | `8084` | Orquestador del ciclo de vida de préstamos y devoluciones |
@@ -233,38 +235,42 @@ Antes de levantar el proyecto, asegúrate de tener instalado:
 
 > 🪟 Todos los comandos de esta guía están escritos para **PowerShell** (Windows). Si usas macOS/Linux, la sintaxis de los comandos `mvn`, `docker` y `git` es idéntica.
 
+> ℹ️ **¿Java y Maven son realmente obligatorios?** Depende de cómo vayas a usar el proyecto:
+> - **Si solo vas a levantarlo con Docker** (`docker compose up`), los `Dockerfile` de cada microservicio compilan el `.jar` **dentro** del propio contenedor (usando una imagen base con Maven + JDK ya incluidos). En ese caso, **no necesitas tener Java ni Maven instalados en tu máquina** para que el sistema funcione.
+> - **Si vas a abrir el proyecto en un IDE** (IntelliJ, VS Code) para programar, debuguear o correr un microservicio suelto fuera de Docker, ahí sí necesitas Java 21 y Maven instalados y correctamente configurados en tu equipo (ver [Problemas comunes](#-problemas-comunes) si `JAVA_HOME` falla).
+
 ---
 
 ## 🚀 Quick Start
 
-La forma más rápida de levantar todo el sistema (backend + base de datos) usando Docker:
+La forma más rápida de levantar todo el sistema (backend + base de datos):
 
 ```powershell
 # 1. Clonar el repositorio
 git clone https://github.com/simon/primer-proyecto.git
 cd primer-proyecto
 
-# 2. Compilar todos los microservicios (genera los .jar)
-$services = @("eureka-server","api-gateway","UsuariosMicro","catalogo-service","carrito","prestamo","pago","notificaciones","envio","resena","reporte")
-foreach ($s in $services) { mvn clean package -DskipTests -f "$s/pom.xml" }
-
-# 3. Construir las imágenes Docker
+# 2. Construir las imágenes Docker (compila los .jar dentro de cada contenedor)
 docker compose build
 
-# 4. Levantar todo el sistema
+# 3. Levantar todo el sistema
 docker compose up -d
 
-# 5. Verificar que todo esté arriba
+# 4. Verificar que todo esté arriba
 docker compose ps
 ```
 
+> ✅ Con estos 4 pasos **no necesitas tener Java ni Maven instalados en tu máquina** — cada `Dockerfile` compila su propio `.jar` internamente al hacer `docker compose build`.
+
 Espera unos **30 segundos** tras el arranque para que todos los servicios terminen de registrarse en Eureka. Luego entra a `http://localhost:8761` para confirmarlo.
+
+> 🛠️ ¿Vas a programar o debuguear un microservicio fuera de Docker? Entonces sí necesitas compilar manualmente con Maven — ve a la sección [Instalación](#-instalación) para ese flujo.
 
 ---
 
 ## 💻 Instalación
 
-Paso a paso detallado (equivalente al Quick Start, pero explicado):
+> Esta sección es solo necesaria si vas a **desarrollar o correr un microservicio fuera de Docker** (en tu IDE). Si solo quieres levantar el sistema completo, con el [Quick Start](#-quick-start) es suficiente.
 
 **1. Clona el repositorio:**
 ```powershell
@@ -272,7 +278,7 @@ git clone https://github.com/simon/primer-proyecto.git
 cd primer-proyecto
 ```
 
-**2. Compila cada microservicio.** Esto genera el archivo `.jar` que luego usará cada `Dockerfile`:
+**2. Compila cada microservicio.** Esto genera el archivo `.jar` que también usa cada `Dockerfile` como base:
 ```powershell
 mvn clean package -DskipTests -f eureka-server/pom.xml
 mvn clean package -DskipTests -f api-gateway/pom.xml
@@ -286,6 +292,13 @@ mvn clean package -DskipTests -f envio/pom.xml
 mvn clean package -DskipTests -f resena/pom.xml
 mvn clean package -DskipTests -f reporte/pom.xml
 ```
+
+O, si prefieres compilarlos todos de una vez:
+```powershell
+$services = @("eureka-server","api-gateway","UsuariosMicro","catalogo-service","carrito","prestamo","pago","notificaciones","envio","resena","reporte")
+foreach ($s in $services) { mvn clean package -DskipTests -f "$s/pom.xml" }
+```
+
 > `-DskipTests` omite las pruebas unitarias para acelerar el build local. Quítalo si quieres que Maven las ejecute.
 
 **3. Verifica que cada carpeta tenga su `.jar` generado** dentro de `target/` (ej. `eureka-server/target/eureka-server-0.0.1-SNAPSHOT.jar`).
@@ -318,14 +331,8 @@ SPRING_DATASOURCE_URL: jdbc:mysql://mysql-bibliogo:3306/bibliogo_usuarios
 EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
 ```
 
-### 🔐 Configuración JWT
-Cada microservicio protegido valida el token emitido por `usuarios-micro`. La clave secreta y el tiempo de expiración se definen en el `application.yml` de cada servicio:
-
-```yaml
-jwt:
-  secret: bibliogo_secret_key
-  expiration: 3600000 # 1 hora en milisegundos
-```
+### 🔐 Seguridad (pendiente)
+La autenticación con JWT **no está implementada todavía** — actualmente todos los endpoints son de acceso directo, sin token. Está planificada como mejora futura (ver [🚀 Mejoras futuras](#-mejoras-futuras)).
 
 ### 🐳 Configuración de Docker
 Cada microservicio tiene su propio `Dockerfile`, y `docker-compose.yml` orquesta toda la red interna, exponiendo únicamente los puertos necesarios hacia el host (ver tabla de [Infraestructura](#-infraestructura-y-microservicios)).
@@ -438,54 +445,56 @@ Confirma que los 12 contenedores estén `Up` o `healthy`.
 
 Todos los endpoints se consumen a través del **API Gateway** en `http://localhost:8090`.
 
-### Registrar usuario
+### Usuarios (`usuarios-micro`)
+
+| Método | Endpoint | Descripción |
+|:---:|---|---|
+| `POST` | `/usuarios/crear` | Crear usuario |
+| `GET` | `/usuarios/{id}` | Buscar usuario por ID |
+| `GET` | `/usuarios/listar` | Listar todos los usuarios |
+| `GET` | `/usuarios/rol/{rol}` | Buscar usuarios por rol |
+| `GET` | `/usuarios/estado/{estado}` | Buscar usuarios por estado |
+| `GET` | `/usuarios/correo/{correo}` | Buscar usuario por correo |
+| `PUT` | `/usuarios/actualizar/{id}` | Actualizar usuario |
+| `DELETE` | `/usuarios/eliminar/{id}` | Eliminar usuario |
+
+**Ejemplo — Crear usuario:**
 ```http
-POST http://localhost:8090/api/auth/register
+POST http://localhost:8090/usuarios/crear
 Content-Type: application/json
 ```
 ```json
 {
   "nombre": "Simón",
   "apellido": "Hércules",
-  "email": "simon@test.cl",
+  "correo": "sim@g.cl",
   "password": "mi_password_segura",
+  "telefono": "string",
+  "direccion": "string",
   "rol": "USER"
 }
 ```
 **Respuesta esperada (201 Created):**
 ```json
 {
-  "id": 1,
+  "id": 5,
   "nombre": "Simón",
-  "email": "simon@test.cl",
-  "rol": "USER"
+  "apellido": "Hércules",
+  "correo": "sim@g.cl",
+  "telefono": null,
+  "direccion": null,
+  "rol": "USER",
+  "estado": "activo"
 }
 ```
+> La contraseña se encripta automáticamente con **BCrypt** antes de guardarse; nunca se devuelve en la respuesta.
 
-### Iniciar sesión
-```http
-POST http://localhost:8090/api/auth/login
-Content-Type: application/json
-```
-```json
-{
-  "email": "simon@test.cl",
-  "password": "mi_password_segura"
-}
-```
-**Respuesta esperada (200 OK):**
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "tipo": "Bearer"
-}
-```
+### Préstamos (`prestamo-service`)
 
-### Confirmar préstamo (endpoint protegido)
+**Ejemplo — Confirmar préstamo:**
 ```http
 POST http://localhost:8090/api/prestamo/confirmar
 Content-Type: application/json
-Authorization: Bearer <token-obtenido-en-login>
 ```
 ```json
 {
@@ -504,35 +513,30 @@ Authorization: Bearer <token-obtenido-en-login>
 }
 ```
 
-> 📖 Cada microservicio expone su propio Swagger con **todos** sus endpoints documentados (ver tabla en [Verificación](#-verificación)). Los tres ejemplos anteriores cubren el flujo principal de autenticación + préstamo.
+> 📖 Cada microservicio expone su propio Swagger con **todos** sus endpoints documentados (ver tabla en [Verificación](#-verificación)). Los ejemplos anteriores cubren usuarios y el flujo principal de préstamo; el resto de servicios (catálogo, carrito, pago, notificaciones, envío, reseña, reporte) sigue el mismo patrón CRUD — revisa su Swagger para el detalle exacto de cada uno.
+> ⚠️ **Ninguno de estos endpoints requiere token de autenticación por ahora** — el sistema aún no implementa JWT (ver [🚀 Mejoras futuras](#-mejoras-futuras)).
 
 ---
 
 ## 🔐 Autenticación
 
-El sistema usa **JWT (JSON Web Token)** para proteger los endpoints. Flujo completo:
+🚧 **Pendiente de implementación.** BiblioGo aún **no cuenta con un sistema de autenticación (JWT o similar)**. Actualmente todos los endpoints de todos los microservicios son de **acceso directo**, sin necesidad de token ni login previo.
 
-1. **Registro** — `POST /api/auth/register` crea el usuario con contraseña hasheada en **BCrypt**.
-2. **Login** — `POST /api/auth/login` valida las credenciales y devuelve un **token JWT**.
-3. **Obtención del JWT** — el token viene en el campo `token` de la respuesta del login. Cópialo completo (sin comillas).
-4. **Uso del JWT** — en cada request a un endpoint protegido, agrega el header:
-   ```
-   Authorization: Bearer <tu_token_aquí>
-   ```
-   Sin este header (o con un token vencido/inválido), el Gateway responde `401 Unauthorized` o `403 Forbidden`.
+- La creación de usuarios (`POST /usuarios/crear`) guarda la contraseña encriptada con **BCrypt**, pero eso es solo para almacenamiento seguro — no existe todavía un endpoint que valide esas credenciales y devuelva un token.
+- El campo `rol` en el usuario (`USER` / `ADMIN`) existe en el modelo de datos, pero no hay un mecanismo de autorización que lo haga cumplir en tiempo de ejecución.
+- La implementación de JWT está planificada como mejora futura — ver [🚀 Mejoras futuras](#-mejoras-futuras).
 
 ---
 
 ## 🧪 Pruebas
 
-Cómo probar el sistema completo desde Swagger, sin Postman:
+Cómo probar el sistema desde Swagger, sin Postman:
 
-1. Abre el Swagger de `usuarios-micro`: `http://localhost:8081/swagger-ui/index.html`.
-2. Ejecuta `POST /api/auth/register` con **Try it out** para crear tu usuario.
-3. Ejecuta `POST /api/auth/login` y copia el `token` de la respuesta.
-4. Haz clic en el botón **Authorize** (🔒, arriba a la derecha en Swagger) y pega: `Bearer <tu_token>`.
-5. Ve al Swagger del servicio que quieras probar (ej. `catalogo-service` en el puerto 8082) y ejecuta sus endpoints con **Try it out** — ya quedarás autenticado en esa sesión de Swagger.
-6. Repite el paso de **Authorize** en cada Swagger distinto, ya que cada uno corre en un puerto/instancia diferente.
+1. Abre el Swagger del microservicio que quieras probar, por ejemplo `usuarios-micro`: `http://localhost:8081/swagger-ui/index.html`.
+2. Despliega el endpoint que quieras probar (ej. `POST /usuarios/crear`) y haz clic en **Try it out**.
+3. Completa el body de ejemplo con tus propios datos y presiona **Execute**.
+4. Revisa la respuesta (código HTTP y JSON) directamente debajo, en la sección **Server response**.
+5. Repite el proceso en el Swagger de cualquier otro microservicio (ver tabla en [Verificación](#-verificación)) — como no hay autenticación implementada, no necesitas ningún paso adicional de login ni **Authorize**.
 
 ---
 
@@ -541,20 +545,23 @@ Cómo probar el sistema completo desde Swagger, sin Postman:
 | Error | Causa | Solución |
 |---|---|---|
 | `503 Service Unavailable` | El Gateway aún no localizó el servicio en Eureka. | Espera ~30 segundos tras el arranque y reintenta. |
-| `401 Unauthorized` / `403 Forbidden` | El token JWT falta, expiró, o no lleva la palabra `Bearer`. | Vuelve a hacer login y revisa el header `Authorization: Bearer <token>`. |
 | Conflicto en el puerto MySQL (3306/3307) | Tienes una instancia local de MySQL corriendo en tu máquina. | Detén el servicio de MySQL nativo en Windows antes de levantar Docker. |
 | Un microservicio no aparece en Eureka | Arrancó antes que `eureka-server`. | Reinícialo con `docker compose restart <servicio>` o respeta el orden de [Ejecución Local](#-ejecución-local). |
+| `JAVA_HOME` no está definido correctamente | Maven no encuentra la ruta del JDK en las variables de entorno de Windows. | Ejecuta `where.exe java` para ubicar el JDK y define la variable: `[System.Environment]::SetEnvironmentVariable('JAVA_HOME', 'C:\Program Files\Java\jdk-21', 'User')`. Cierra y vuelve a abrir PowerShell, luego verifica con `mvn -version`. **Nota:** este error solo afecta si compilas manualmente con Maven o usas un IDE; si solo usas `docker compose build`, no te bloquea, ya que el `.jar` se compila dentro del contenedor. |
+| `git clone` pide usuario y contraseña | El repositorio es privado o la URL no es correcta. | Confirma la URL real del repo. Si es privado, usa un **Personal Access Token** en lugar de tu contraseña (GitHub ya no acepta password plano). |
 
 ---
 
 ## 📈 Estado del Proyecto
 
 ✅ **Finalizado** — ecosistema funcional e integrado, desarrollado con Spring Boot, Spring Cloud y Docker, entregado como Examen Transversal de Ingeniería de Software.
+🚧 Autenticación JWT pendiente de implementación (ver [Mejoras futuras](#-mejoras-futuras)).
 
 ---
 
 ## 🚀 Mejoras futuras
 
+- 🔐 Implementar autenticación y autorización con **JWT**, incluyendo endpoints de login y protección de rutas según el rol (`USER` / `ADMIN`).
 - 💳 Integración con una pasarela de pago real para el pago de multas.
 - 📱 Cliente frontend (web o móvil) consumiendo la API pública.
 - 📅 Sistema de reservas anticipadas de libros.
